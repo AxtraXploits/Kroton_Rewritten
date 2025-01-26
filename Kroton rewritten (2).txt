@@ -3,110 +3,6 @@ kroton v3 by cryptic
 discord: crypticww
 ]]--
 
-bit32 = {};
-local N = 32;
-local P = 2 ^ N;
-bit32.bnot = function(x)
-	x = x % P;
-	return (P - 1) - x;
-end;
-bit32.band = function(x, y)
-	if (y == 255) then
-		return x % 256;
-	end
-	if (y == 65535) then
-		return x % 65536;
-	end
-	if (y == 4294967295) then
-		return x % 4294967296;
-	end
-	x, y = x % P, y % P;
-	local r = 0;
-	local p = 1;
-	for i = 1, N do
-		local a, b = x % 2, y % 2;
-		x, y = math.floor(x / 2), math.floor(y / 2);
-		if ((a + b) == 2) then
-			r = r + p;
-		end
-		p = 2 * p;
-	end
-	return r;
-end;
-bit32.bor = function(x, y)
-	if (y == 255) then
-		return (x - (x % 256)) + 255;
-	end
-	if (y == 65535) then
-		return (x - (x % 65536)) + 65535;
-	end
-	if (y == 4294967295) then
-		return 4294967295;
-	end
-	x, y = x % P, y % P;
-	local r = 0;
-	local p = 1;
-	for i = 1, N do
-		local a, b = x % 2, y % 2;
-		x, y = math.floor(x / 2), math.floor(y / 2);
-		if ((a + b) >= 1) then
-			r = r + p;
-		end
-		p = 2 * p;
-	end
-	return r;
-end;
-bit32.bxor = function(x, y)
-	x, y = x % P, y % P;
-	local r = 0;
-	local p = 1;
-	for i = 1, N do
-		local a, b = x % 2, y % 2;
-		x, y = math.floor(x / 2), math.floor(y / 2);
-		if ((a + b) == 1) then
-			r = r + p;
-		end
-		p = 2 * p;
-	end
-	return r;
-end;
-bit32.lshift = function(x, s_amount)
-	if (math.abs(s_amount) >= N) then
-		return 0;
-	end
-	x = x % P;
-	if (s_amount < 0) then
-		return math.floor(x * (2 ^ s_amount));
-	else
-		return (x * (2 ^ s_amount)) % P;
-	end
-end;
-bit32.rshift = function(x, s_amount)
-	if (math.abs(s_amount) >= N) then
-		return 0;
-	end
-	x = x % P;
-	if (s_amount > 0) then
-		return math.floor(x * (2 ^ -s_amount));
-	else
-		return (x * (2 ^ -s_amount)) % P;
-	end
-end;
-bit32.arshift = function(x, s_amount)
-	if (math.abs(s_amount) >= N) then
-		return 0;
-	end
-	x = x % P;
-	if (s_amount > 0) then
-		local add = 0;
-		if (x >= (P / 2)) then
-			add = P - (2 ^ (N - s_amount));
-		end
-		return math.floor(x * (2 ^ -s_amount)) + add;
-	else
-		return (x * (2 ^ -s_amount)) % P;
-	end
-end;
 local Kroton = Instance.new("ScreenGui");
 local main = Instance.new("Frame");
 local UICorner = Instance.new("UICorner");
@@ -146,7 +42,7 @@ local catlocks = Instance.new("TextLabel");
 local catToggles = Instance.new("TextLabel");
 local NoSlowdown = Instance.new("TextButton");
 local autostomp = Instance.new("TextButton");
-local TABTarget = Instance.new("ScrollingFrame");
+local TABvislightning = Instance.new("ScrollingFrame");
 local title_6 = Instance.new("TextLabel");
 local UIListLayout_4 = Instance.new("UIListLayout");
 local AntiLag = Instance.new("TextButton");
@@ -155,11 +51,14 @@ local infzoom = Instance.new("TextButton");
 local DeleteProps = Instance.new("TextButton");
 local DeleteLights = Instance.new("TextButton");
 local espname = Instance.new("TextButton");
-local esp2dboxfilled = Instance.new("TextButton");
+local esptracer = Instance.new("TextButton");
 local ColourCorrection = Instance.new("TextButton");
 local catesp = Instance.new("TextLabel");
 local espchams = Instance.new("TextButton");
 local catlightning = Instance.new("TextLabel");
+local esphealth = Instance.new("TextButton");
+local esp2dbox = Instance.new("TextButton");
+local esp3dbox = Instance.new("TextButton");
 local TABTeleports = Instance.new("ScrollingFrame");
 local title_7 = Instance.new("TextLabel");
 local UIListLayout_5 = Instance.new("UIListLayout");
@@ -192,20 +91,38 @@ local TextLabel_4 = Instance.new("TextLabel");
 local TextLabel_5 = Instance.new("TextLabel");
 local TextLabel_6 = Instance.new("TextLabel");
 local TextLabel_7 = Instance.new("TextLabel");
-local buttons = Instance.new("ScrollingFrame");
-local About = Instance.new("TextButton");
-local UICorner_9 = Instance.new("UICorner");
-local Home = Instance.new("TextButton");
-local UICorner_10 = Instance.new("UICorner");
-local MainScriptsButton = Instance.new("TextButton");
-local UICorner_11 = Instance.new("UICorner");
-local Combat = Instance.new("TextButton");
-local UICorner_12 = Instance.new("UICorner");
+local TextLabel_8 = Instance.new("TextLabel");
+local TextLabel_9 = Instance.new("TextLabel");
+local TextLabel_10 = Instance.new("TextLabel");
+local buttons = Instance.new("Frame");
 local VisualLightning = Instance.new("TextButton");
-local UICorner_13 = Instance.new("UICorner");
+local UICorner_9 = Instance.new("UICorner");
 local Teleports = Instance.new("TextButton");
+local UICorner_10 = Instance.new("UICorner");
+local Main = Instance.new("TextButton");
+local UICorner_11 = Instance.new("UICorner");
+local Home = Instance.new("TextButton");
+local UICorner_12 = Instance.new("UICorner");
+local Combat = Instance.new("TextButton");
+local UICorner_13 = Instance.new("UICorner");
+local About = Instance.new("TextButton");
 local UICorner_14 = Instance.new("UICorner");
 local UIListLayout_8 = Instance.new("UIListLayout");
+local UICorner_15 = Instance.new("UICorner");
+local Target = Instance.new("TextButton");
+local UICorner_16 = Instance.new("UICorner");
+local Frame = Instance.new("Frame");
+local TABTarget = Instance.new("ScrollingFrame");
+local title_9 = Instance.new("TextLabel");
+local UIListLayout_9 = Instance.new("UIListLayout");
+local plrheadshot = Instance.new("ImageLabel");
+local UICorner_17 = Instance.new("UICorner");
+local plrInput = Instance.new("TextBox");
+local UICorner_18 = Instance.new("UICorner");
+local view = Instance.new("TextButton");
+local aimview = Instance.new("TextButton");
+local goto = Instance.new("TextButton");
+local title_10 = Instance.new("TextLabel");
 Kroton['Name'] = "Kroton";
 Kroton['Parent'] = game['CoreGui'];
 Kroton['ResetOnSpawn'] = false;
@@ -225,7 +142,7 @@ title['BorderColor3'] = Color3.fromRGB(27, 42, 53);
 title['Size'] = UDim2.new(0, 590, 0, 45);
 title['Font'] = Enum['Font']['Unknown'];
 title['Text'] = "   roton";
-title['TextColor3'] = Color3.fromRGB(255, 193, 194);
+title['TextColor3'] = Color3.fromRGB(222, 170, 255);
 title['TextScaled'] = true;
 title['TextSize'] = 33;
 title['TextWrapped'] = true;
@@ -234,7 +151,7 @@ UICorner_2['CornerRadius'] = UDim.new(0, 4);
 UICorner_2['Parent'] = title;
 clear['Name'] = "clear";
 clear['Parent'] = title;
-clear['BackgroundColor3'] = Color3.fromRGB(255, 110, 112);
+clear['BackgroundColor3'] = Color3.fromRGB(222, 170, 255);
 clear['BackgroundTransparency'] = 1;
 clear['BorderColor3'] = Color3.fromRGB(27, 42, 53);
 clear['LayoutOrder'] = 5;
@@ -242,7 +159,7 @@ clear['Position'] = UDim2.new(0.938983023, 0, 0.211111113, 0);
 clear['Size'] = UDim2.new(0, 25, 0, 25);
 clear['ZIndex'] = 2;
 clear['Image'] = "rbxassetid://3926305904";
-clear['ImageColor3'] = Color3.fromRGB(255, 155, 157);
+clear['ImageColor3'] = Color3.fromRGB(222, 170, 255);
 clear['ImageRectOffset'] = Vector2.new(924, 724);
 clear['ImageRectSize'] = Vector2.new(36, 36);
 title_2['Name'] = "title";
@@ -254,7 +171,7 @@ title_2['Position'] = UDim2.new(0, 0, -0.266666681, 0);
 title_2['Size'] = UDim2.new(0, 43, 0, 69);
 title_2['Font'] = Enum['Font']['Unknown'];
 title_2['Text'] = "K";
-title_2['TextColor3'] = Color3.fromRGB(255, 84, 87);
+title_2['TextColor3'] = Color3.fromRGB(215, 94, 255);
 title_2['TextScaled'] = true;
 title_2['TextSize'] = 33;
 title_2['TextWrapped'] = true;
@@ -268,7 +185,7 @@ title_3['Position'] = UDim2.new(0.208474576, 0, 0, 0);
 title_3['Size'] = UDim2.new(0, 40, 0, 34);
 title_3['Font'] = Enum['Font']['Unknown'];
 title_3['Text'] = " v3";
-title_3['TextColor3'] = Color3.fromRGB(255, 94, 97);
+title_3['TextColor3'] = Color3.fromRGB(227, 117, 255);
 title_3['TextScaled'] = true;
 title_3['TextSize'] = 33;
 title_3['TextWrapped'] = true;
@@ -276,21 +193,23 @@ title_3['TextXAlignment'] = Enum['TextXAlignment']['Left'];
 TABMain['Name'] = "TAB:Main";
 TABMain['Parent'] = main;
 TABMain['Active'] = true;
-TABMain['BackgroundColor3'] = Color3.fromRGB(38, 38, 38);
+TABMain['BackgroundColor3'] = Color3.fromRGB(33, 33, 33);
 TABMain['BorderColor3'] = Color3.fromRGB(158, 87, 88);
+TABMain['BorderSizePixel'] = 0;
 TABMain['Position'] = UDim2.new(0.307999998, 0, 0.136999995, 0);
 TABMain['Size'] = UDim2.new(0, 395, 0, 308);
 TABMain['Visible'] = false;
 TABMain['ScrollBarThickness'] = 4;
 title_4['Name'] = "title";
 title_4['Parent'] = TABMain;
-title_4['BackgroundColor3'] = Color3.fromRGB(36, 36, 36);
+title_4['BackgroundColor3'] = Color3.fromRGB(29, 29, 29);
+title_4['BackgroundTransparency'] = 0.5;
 title_4['BorderSizePixel'] = 0;
 title_4['LayoutOrder'] = -310437;
 title_4['Size'] = UDim2.new(0, 403, 0, 30);
 title_4['Font'] = Enum['Font']['GothamBold'];
 title_4['Text'] = "Main";
-title_4['TextColor3'] = Color3.fromRGB(255, 161, 163);
+title_4['TextColor3'] = Color3.fromRGB(227, 117, 255);
 title_4['TextScaled'] = true;
 title_4['TextSize'] = 14;
 title_4['TextWrapped'] = true;
@@ -304,7 +223,7 @@ speed['Position'] = UDim2.new(-0.000444861304, 0, 0.314935058, 0);
 speed['Size'] = UDim2.new(0, 388, 0, 36);
 speed['Font'] = Enum['Font']['GothamBold'];
 speed['Text'] = "Speed (C)";
-speed['TextColor3'] = Color3.fromRGB(255, 161, 163);
+speed['TextColor3'] = Color3.fromRGB(222, 170, 255);
 speed['TextSize'] = 30;
 UIListLayout['Parent'] = TABMain;
 UIListLayout['HorizontalAlignment'] = Enum['HorizontalAlignment']['Center'];
@@ -320,7 +239,7 @@ fly['Position'] = UDim2.new(-0.000444861304, 0, 0.181818187, 0);
 fly['Size'] = UDim2.new(0, 388, 0, 36);
 fly['Font'] = Enum['Font']['GothamBold'];
 fly['Text'] = "Fly (X)";
-fly['TextColor3'] = Color3.fromRGB(255, 161, 163);
+fly['TextColor3'] = Color3.fromRGB(222, 170, 255);
 fly['TextSize'] = 30;
 DisableSeats['Name'] = "Disable Seats";
 DisableSeats['Parent'] = TABMain;
@@ -332,7 +251,7 @@ DisableSeats['Position'] = UDim2.new(-0.000444861304, 0, 0.58116883, 0);
 DisableSeats['Size'] = UDim2.new(0, 388, 0, 36);
 DisableSeats['Font'] = Enum['Font']['GothamBold'];
 DisableSeats['Text'] = "Disable Seats";
-DisableSeats['TextColor3'] = Color3.fromRGB(255, 161, 163);
+DisableSeats['TextColor3'] = Color3.fromRGB(222, 170, 255);
 DisableSeats['TextSize'] = 30;
 spin['Name'] = "spin";
 spin['Parent'] = TABMain;
@@ -344,7 +263,7 @@ spin['Position'] = UDim2.new(-0.000444861304, 0, 0.448051959, 0);
 spin['Size'] = UDim2.new(0, 388, 0, 36);
 spin['Font'] = Enum['Font']['GothamBold'];
 spin['Text'] = "Spin (G)";
-spin['TextColor3'] = Color3.fromRGB(255, 161, 163);
+spin['TextColor3'] = Color3.fromRGB(222, 170, 255);
 spin['TextSize'] = 30;
 catfucntions['Name'] = "catfucntions";
 catfucntions['Parent'] = TABMain;
@@ -356,7 +275,7 @@ catfucntions['Position'] = UDim2.new(-0.000444861304, 0, 0.113636367, 0);
 catfucntions['Size'] = UDim2.new(0, 365, 0, 16);
 catfucntions['Font'] = Enum['Font']['GothamBold'];
 catfucntions['Text'] = "Functions";
-catfucntions['TextColor3'] = Color3.fromRGB(255, 161, 163);
+catfucntions['TextColor3'] = Color3.fromRGB(227, 117, 255);
 catfucntions['TextScaled'] = true;
 catfucntions['TextSize'] = 14;
 catfucntions['TextWrapped'] = true;
@@ -370,24 +289,25 @@ animationpack['Position'] = UDim2.new(-0.000444861304, 0, 0.714285731, 0);
 animationpack['Size'] = UDim2.new(0, 388, 0, 36);
 animationpack['Font'] = Enum['Font']['GothamBold'];
 animationpack['Text'] = "Animation Pack";
-animationpack['TextColor3'] = Color3.fromRGB(255, 161, 163);
+animationpack['TextColor3'] = Color3.fromRGB(222, 170, 255);
 animationpack['TextSize'] = 30;
 TABHome['Name'] = "TAB:Home";
 TABHome['Parent'] = main;
-TABHome['BackgroundColor3'] = Color3.fromRGB(38, 38, 38);
+TABHome['BackgroundColor3'] = Color3.fromRGB(33, 33, 33);
 TABHome['BorderColor3'] = Color3.fromRGB(158, 87, 88);
+TABHome['BorderSizePixel'] = 0;
 TABHome['Position'] = UDim2.new(0.308999985, 0, 0.136999995, 0);
 TABHome['Size'] = UDim2.new(0, 395, 0, 308);
 playername['Name'] = "playername";
 playername['Parent'] = TABHome;
-playername['BackgroundColor3'] = Color3.fromRGB(36, 36, 36);
+playername['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
 playername['BorderColor3'] = Color3.fromRGB(27, 42, 53);
 playername['LayoutOrder'] = -99;
 playername['Position'] = UDim2.new(-0.0028929119, 0, 0.318181813, 0);
 playername['Size'] = UDim2.new(0, 374, 0, 50);
 playername['Font'] = Enum['Font']['GothamBold'];
 playername['Text'] = "Welcome to Kroton, Player(dPlayer) have fun exploiting!";
-playername['TextColor3'] = Color3.fromRGB(255, 161, 163);
+playername['TextColor3'] = Color3.fromRGB(222, 170, 255);
 playername['TextScaled'] = true;
 playername['TextSize'] = 14;
 playername['TextWrapped'] = true;
@@ -395,14 +315,14 @@ UICorner_3['CornerRadius'] = UDim.new(0, 2);
 UICorner_3['Parent'] = playername;
 playerid['Name'] = "playerid";
 playerid['Parent'] = TABHome;
-playerid['BackgroundColor3'] = Color3.fromRGB(36, 36, 36);
+playerid['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
 playerid['BorderColor3'] = Color3.fromRGB(27, 42, 53);
 playerid['LayoutOrder'] = -98;
 playerid['Position'] = UDim2.new(-0.0028929119, 0, 0.496753246, 0);
 playerid['Size'] = UDim2.new(0, 374, 0, 18);
 playerid['Font'] = Enum['Font']['GothamBold'];
 playerid['Text'] = "PlayerId: 00000";
-playerid['TextColor3'] = Color3.fromRGB(255, 161, 163);
+playerid['TextColor3'] = Color3.fromRGB(222, 170, 255);
 playerid['TextScaled'] = true;
 playerid['TextSize'] = 14;
 playerid['TextWrapped'] = true;
@@ -410,14 +330,14 @@ UICorner_4['CornerRadius'] = UDim.new(0, 2);
 UICorner_4['Parent'] = playerid;
 gt['Name'] = "gt";
 gt['Parent'] = TABHome;
-gt['BackgroundColor3'] = Color3.fromRGB(36, 36, 36);
+gt['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
 gt['BorderColor3'] = Color3.fromRGB(27, 42, 53);
 gt['LayoutOrder'] = -96;
 gt['Position'] = UDim2.new(-0.0028929119, 0, 0.649350643, 0);
 gt['Size'] = UDim2.new(0, 374, 0, 19);
 gt['Font'] = Enum['Font']['GothamBold'];
 gt['Text'] = "Distributed Game Time : 000000";
-gt['TextColor3'] = Color3.fromRGB(255, 161, 163);
+gt['TextColor3'] = Color3.fromRGB(222, 170, 255);
 gt['TextScaled'] = true;
 gt['TextSize'] = 14;
 gt['TextWrapped'] = true;
@@ -441,14 +361,14 @@ UIListLayout_2['SortOrder'] = Enum['SortOrder']['LayoutOrder'];
 UIListLayout_2['Padding'] = UDim.new(0, 5);
 accage['Name'] = "accage";
 accage['Parent'] = TABHome;
-accage['BackgroundColor3'] = Color3.fromRGB(36, 36, 36);
+accage['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
 accage['BorderColor3'] = Color3.fromRGB(27, 42, 53);
 accage['LayoutOrder'] = -97;
 accage['Position'] = UDim2.new(-0.0028929119, 0, 0.571428597, 0);
 accage['Size'] = UDim2.new(0, 374, 0, 19);
 accage['Font'] = Enum['Font']['GothamBold'];
 accage['Text'] = "Account Age: 0000";
-accage['TextColor3'] = Color3.fromRGB(255, 161, 163);
+accage['TextColor3'] = Color3.fromRGB(222, 170, 255);
 accage['TextScaled'] = true;
 accage['TextSize'] = 14;
 accage['TextWrapped'] = true;
@@ -456,14 +376,14 @@ UICorner_7['CornerRadius'] = UDim.new(0, 2);
 UICorner_7['Parent'] = accage;
 V['Name'] = "V";
 V['Parent'] = TABHome;
-V['BackgroundColor3'] = Color3.fromRGB(36, 36, 36);
+V['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
 V['BorderColor3'] = Color3.fromRGB(27, 42, 53);
 V['LayoutOrder'] = -95;
 V['Position'] = UDim2.new(0.0265822783, 0, 0.727272749, 0);
 V['Size'] = UDim2.new(0, 374, 0, 70);
 V['Font'] = Enum['Font']['GothamBold'];
 V['Text'] = 'Press \"V\" to toggle visibility of the script!';
-V['TextColor3'] = Color3.fromRGB(255, 161, 163);
+V['TextColor3'] = Color3.fromRGB(222, 170, 255);
 V['TextSize'] = 22;
 V['TextStrokeColor3'] = Color3.fromRGB(27, 27, 27);
 V['TextWrapped'] = true;
@@ -472,21 +392,23 @@ UICorner_8['Parent'] = V;
 TABSide['Name'] = "TAB:Side";
 TABSide['Parent'] = main;
 TABSide['Active'] = true;
-TABSide['BackgroundColor3'] = Color3.fromRGB(38, 38, 38);
+TABSide['BackgroundColor3'] = Color3.fromRGB(33, 33, 33);
 TABSide['BorderColor3'] = Color3.fromRGB(158, 87, 88);
+TABSide['BorderSizePixel'] = 0;
 TABSide['Position'] = UDim2.new(0.307999998, 0, 0.136999995, 0);
 TABSide['Size'] = UDim2.new(0, 395, 0, 308);
 TABSide['Visible'] = false;
 TABSide['ScrollBarThickness'] = 4;
 title_5['Name'] = "title";
 title_5['Parent'] = TABSide;
-title_5['BackgroundColor3'] = Color3.fromRGB(36, 36, 36);
+title_5['BackgroundColor3'] = Color3.fromRGB(29, 29, 29);
+title_5['BackgroundTransparency'] = 0.5;
 title_5['BorderSizePixel'] = 0;
 title_5['LayoutOrder'] = -310437;
 title_5['Size'] = UDim2.new(0, 404, 0, 30);
 title_5['Font'] = Enum['Font']['GothamBold'];
 title_5['Text'] = "Combat";
-title_5['TextColor3'] = Color3.fromRGB(255, 161, 163);
+title_5['TextColor3'] = Color3.fromRGB(227, 117, 255);
 title_5['TextScaled'] = true;
 title_5['TextSize'] = 14;
 title_5['TextWrapped'] = true;
@@ -504,7 +426,7 @@ camaim['Position'] = UDim2.new(0, 0, 0.408719361, 0);
 camaim['Size'] = UDim2.new(0, 388, 0, 36);
 camaim['Font'] = Enum['Font']['GothamBold'];
 camaim['Text'] = "Camera Aimlock (Q)";
-camaim['TextColor3'] = Color3.fromRGB(255, 161, 163);
+camaim['TextColor3'] = Color3.fromRGB(222, 170, 255);
 camaim['TextSize'] = 30;
 catlocks['Name'] = "catlocks";
 catlocks['Parent'] = TABSide;
@@ -516,7 +438,7 @@ catlocks['Position'] = UDim2.new(-0.00554016605, 0, 0.113636367, 0);
 catlocks['Size'] = UDim2.new(0, 365, 0, 16);
 catlocks['Font'] = Enum['Font']['GothamBold'];
 catlocks['Text'] = "Locks";
-catlocks['TextColor3'] = Color3.fromRGB(255, 161, 163);
+catlocks['TextColor3'] = Color3.fromRGB(227, 117, 255);
 catlocks['TextScaled'] = true;
 catlocks['TextSize'] = 14;
 catlocks['TextWrapped'] = true;
@@ -530,7 +452,7 @@ catToggles['Position'] = UDim2.new(-0.00554016605, 0, 0.113636367, 0);
 catToggles['Size'] = UDim2.new(0, 365, 0, 16);
 catToggles['Font'] = Enum['Font']['GothamBold'];
 catToggles['Text'] = "Toggles";
-catToggles['TextColor3'] = Color3.fromRGB(255, 161, 163);
+catToggles['TextColor3'] = Color3.fromRGB(227, 117, 255);
 catToggles['TextScaled'] = true;
 catToggles['TextSize'] = 14;
 catToggles['TextWrapped'] = true;
@@ -558,33 +480,35 @@ autostomp['Text'] = "Auto Stomp";
 autostomp['TextColor3'] = Color3.fromRGB(255, 73, 75);
 autostomp['TextSize'] = 33;
 autostomp['TextWrapped'] = true;
-TABTarget['Name'] = "TAB:Target";
-TABTarget['Parent'] = main;
-TABTarget['Active'] = true;
-TABTarget['BackgroundColor3'] = Color3.fromRGB(38, 38, 38);
-TABTarget['BorderColor3'] = Color3.fromRGB(158, 87, 88);
-TABTarget['Position'] = UDim2.new(0.307999998, 0, 0.136999995, 0);
-TABTarget['Size'] = UDim2.new(0, 395, 0, 308);
-TABTarget['Visible'] = false;
-TABTarget['ScrollBarThickness'] = 4;
+TABvislightning['Name'] = "TAB:vislightning";
+TABvislightning['Parent'] = main;
+TABvislightning['Active'] = true;
+TABvislightning['BackgroundColor3'] = Color3.fromRGB(33, 33, 33);
+TABvislightning['BorderColor3'] = Color3.fromRGB(158, 87, 88);
+TABvislightning['BorderSizePixel'] = 0;
+TABvislightning['Position'] = UDim2.new(0.307999998, 0, 0.136999995, 0);
+TABvislightning['Size'] = UDim2.new(0, 395, 0, 308);
+TABvislightning['Visible'] = false;
+TABvislightning['ScrollBarThickness'] = 4;
 title_6['Name'] = "title";
-title_6['Parent'] = TABTarget;
-title_6['BackgroundColor3'] = Color3.fromRGB(36, 36, 36);
+title_6['Parent'] = TABvislightning;
+title_6['BackgroundColor3'] = Color3.fromRGB(29, 29, 29);
+title_6['BackgroundTransparency'] = 0.5;
 title_6['BorderSizePixel'] = 0;
 title_6['LayoutOrder'] = -310437;
 title_6['Size'] = UDim2.new(0, 398, 0, 30);
 title_6['Font'] = Enum['Font']['GothamBold'];
 title_6['Text'] = "Visual/Lightning";
-title_6['TextColor3'] = Color3.fromRGB(255, 161, 163);
+title_6['TextColor3'] = Color3.fromRGB(227, 117, 255);
 title_6['TextScaled'] = true;
 title_6['TextSize'] = 14;
 title_6['TextWrapped'] = true;
-UIListLayout_4['Parent'] = TABTarget;
+UIListLayout_4['Parent'] = TABvislightning;
 UIListLayout_4['HorizontalAlignment'] = Enum['HorizontalAlignment']['Center'];
 UIListLayout_4['SortOrder'] = Enum['SortOrder']['LayoutOrder'];
 UIListLayout_4['Padding'] = UDim.new(0, 5);
 AntiLag['Name'] = "Anti Lag";
-AntiLag['Parent'] = TABTarget;
+AntiLag['Parent'] = TABvislightning;
 AntiLag['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
 AntiLag['BorderColor3'] = Color3.fromRGB(27, 42, 53);
 AntiLag['BorderSizePixel'] = 0;
@@ -593,10 +517,10 @@ AntiLag['Position'] = UDim2.new(0, 0, 0.408719361, 0);
 AntiLag['Size'] = UDim2.new(0, 388, 0, 36);
 AntiLag['Font'] = Enum['Font']['GothamBold'];
 AntiLag['Text'] = "Anti Lag";
-AntiLag['TextColor3'] = Color3.fromRGB(255, 161, 163);
+AntiLag['TextColor3'] = Color3.fromRGB(222, 170, 255);
 AntiLag['TextSize'] = 30;
 NoFog['Name'] = "No Fog";
-NoFog['Parent'] = TABTarget;
+NoFog['Parent'] = TABvislightning;
 NoFog['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
 NoFog['BorderColor3'] = Color3.fromRGB(27, 42, 53);
 NoFog['BorderSizePixel'] = 0;
@@ -605,10 +529,10 @@ NoFog['Position'] = UDim2.new(0, 0, 0.408719361, 0);
 NoFog['Size'] = UDim2.new(0, 388, 0, 36);
 NoFog['Font'] = Enum['Font']['GothamBold'];
 NoFog['Text'] = "No Fog";
-NoFog['TextColor3'] = Color3.fromRGB(255, 161, 163);
+NoFog['TextColor3'] = Color3.fromRGB(222, 170, 255);
 NoFog['TextSize'] = 30;
 infzoom['Name'] = "infzoom";
-infzoom['Parent'] = TABTarget;
+infzoom['Parent'] = TABvislightning;
 infzoom['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
 infzoom['BorderColor3'] = Color3.fromRGB(27, 42, 53);
 infzoom['BorderSizePixel'] = 0;
@@ -617,10 +541,10 @@ infzoom['Position'] = UDim2.new(0, 0, 0.408719361, 0);
 infzoom['Size'] = UDim2.new(0, 388, 0, 36);
 infzoom['Font'] = Enum['Font']['GothamBold'];
 infzoom['Text'] = "Infinite Zoom";
-infzoom['TextColor3'] = Color3.fromRGB(255, 161, 163);
+infzoom['TextColor3'] = Color3.fromRGB(222, 170, 255);
 infzoom['TextSize'] = 30;
 DeleteProps['Name'] = "Delete Props";
-DeleteProps['Parent'] = TABTarget;
+DeleteProps['Parent'] = TABvislightning;
 DeleteProps['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
 DeleteProps['BorderColor3'] = Color3.fromRGB(27, 42, 53);
 DeleteProps['BorderSizePixel'] = 0;
@@ -629,10 +553,10 @@ DeleteProps['Position'] = UDim2.new(0, 0, 0.408719361, 0);
 DeleteProps['Size'] = UDim2.new(0, 388, 0, 36);
 DeleteProps['Font'] = Enum['Font']['GothamBold'];
 DeleteProps['Text'] = "Delete Props";
-DeleteProps['TextColor3'] = Color3.fromRGB(255, 161, 163);
+DeleteProps['TextColor3'] = Color3.fromRGB(222, 170, 255);
 DeleteProps['TextSize'] = 30;
 DeleteLights['Name'] = "Delete Lights";
-DeleteLights['Parent'] = TABTarget;
+DeleteLights['Parent'] = TABvislightning;
 DeleteLights['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
 DeleteLights['BorderColor3'] = Color3.fromRGB(27, 42, 53);
 DeleteLights['BorderSizePixel'] = 0;
@@ -641,10 +565,10 @@ DeleteLights['Position'] = UDim2.new(0, 0, 0.408719361, 0);
 DeleteLights['Size'] = UDim2.new(0, 388, 0, 36);
 DeleteLights['Font'] = Enum['Font']['GothamBold'];
 DeleteLights['Text'] = "Delete Lights";
-DeleteLights['TextColor3'] = Color3.fromRGB(255, 161, 163);
+DeleteLights['TextColor3'] = Color3.fromRGB(222, 170, 255);
 DeleteLights['TextSize'] = 30;
 espname['Name'] = "espname";
-espname['Parent'] = TABTarget;
+espname['Parent'] = TABvislightning;
 espname['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
 espname['BorderColor3'] = Color3.fromRGB(27, 42, 53);
 espname['BorderSizePixel'] = 0;
@@ -653,22 +577,22 @@ espname['Position'] = UDim2.new(0, 0, 0.408719361, 0);
 espname['Size'] = UDim2.new(0, 388, 0, 36);
 espname['Font'] = Enum['Font']['GothamBold'];
 espname['Text'] = "ESP Name";
-espname['TextColor3'] = Color3.fromRGB(255, 161, 163);
+espname['TextColor3'] = Color3.fromRGB(255, 73, 75);
 espname['TextSize'] = 30;
-esp2dboxfilled['Name'] = "esp2dboxfilled";
-esp2dboxfilled['Parent'] = TABTarget;
-esp2dboxfilled['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
-esp2dboxfilled['BorderColor3'] = Color3.fromRGB(27, 42, 53);
-esp2dboxfilled['BorderSizePixel'] = 0;
-esp2dboxfilled['LayoutOrder'] = -998;
-esp2dboxfilled['Position'] = UDim2.new(0, 0, 0.408719361, 0);
-esp2dboxfilled['Size'] = UDim2.new(0, 388, 0, 36);
-esp2dboxfilled['Font'] = Enum['Font']['GothamBold'];
-esp2dboxfilled['Text'] = "ESP Box/Health/Tracer";
-esp2dboxfilled['TextColor3'] = Color3.fromRGB(255, 161, 163);
-esp2dboxfilled['TextSize'] = 30;
+esptracer['Name'] = "esptracer";
+esptracer['Parent'] = TABvislightning;
+esptracer['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
+esptracer['BorderColor3'] = Color3.fromRGB(27, 42, 53);
+esptracer['BorderSizePixel'] = 0;
+esptracer['LayoutOrder'] = -998;
+esptracer['Position'] = UDim2.new(0, 0, 0.408719361, 0);
+esptracer['Size'] = UDim2.new(0, 388, 0, 36);
+esptracer['Font'] = Enum['Font']['GothamBold'];
+esptracer['Text'] = "ESP Tracer";
+esptracer['TextColor3'] = Color3.fromRGB(255, 73, 75);
+esptracer['TextSize'] = 30;
 ColourCorrection['Name'] = "ColourCorrection";
-ColourCorrection['Parent'] = TABTarget;
+ColourCorrection['Parent'] = TABvislightning;
 ColourCorrection['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
 ColourCorrection['BorderColor3'] = Color3.fromRGB(27, 42, 53);
 ColourCorrection['BorderSizePixel'] = 0;
@@ -677,10 +601,10 @@ ColourCorrection['Position'] = UDim2.new(0, 0, 0.408719361, 0);
 ColourCorrection['Size'] = UDim2.new(0, 388, 0, 36);
 ColourCorrection['Font'] = Enum['Font']['GothamBold'];
 ColourCorrection['Text'] = "Colorful Graphics";
-ColourCorrection['TextColor3'] = Color3.fromRGB(255, 161, 163);
+ColourCorrection['TextColor3'] = Color3.fromRGB(222, 170, 255);
 ColourCorrection['TextSize'] = 30;
 catesp['Name'] = "catesp";
-catesp['Parent'] = TABTarget;
+catesp['Parent'] = TABvislightning;
 catesp['BackgroundColor3'] = Color3.fromRGB(54, 161, 207);
 catesp['BackgroundTransparency'] = 1;
 catesp['BorderSizePixel'] = 0;
@@ -689,12 +613,12 @@ catesp['Position'] = UDim2.new(-0.00554016605, 0, 0.113636367, 0);
 catesp['Size'] = UDim2.new(0, 365, 0, 16);
 catesp['Font'] = Enum['Font']['GothamBold'];
 catesp['Text'] = "ESP";
-catesp['TextColor3'] = Color3.fromRGB(255, 161, 163);
+catesp['TextColor3'] = Color3.fromRGB(222, 170, 255);
 catesp['TextScaled'] = true;
 catesp['TextSize'] = 14;
 catesp['TextWrapped'] = true;
 espchams['Name'] = "espchams";
-espchams['Parent'] = TABTarget;
+espchams['Parent'] = TABvislightning;
 espchams['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
 espchams['BorderColor3'] = Color3.fromRGB(27, 42, 53);
 espchams['BorderSizePixel'] = 0;
@@ -703,10 +627,10 @@ espchams['Position'] = UDim2.new(0, 0, 0.408719361, 0);
 espchams['Size'] = UDim2.new(0, 388, 0, 36);
 espchams['Font'] = Enum['Font']['GothamBold'];
 espchams['Text'] = "ESP Chams";
-espchams['TextColor3'] = Color3.fromRGB(255, 161, 163);
+espchams['TextColor3'] = Color3.fromRGB(255, 73, 75);
 espchams['TextSize'] = 30;
 catlightning['Name'] = "catlightning";
-catlightning['Parent'] = TABTarget;
+catlightning['Parent'] = TABvislightning;
 catlightning['BackgroundColor3'] = Color3.fromRGB(54, 161, 207);
 catlightning['BackgroundTransparency'] = 1;
 catlightning['BorderSizePixel'] = 0;
@@ -715,28 +639,66 @@ catlightning['Position'] = UDim2.new(-0.00554016605, 0, 0.113636367, 0);
 catlightning['Size'] = UDim2.new(0, 365, 0, 16);
 catlightning['Font'] = Enum['Font']['GothamBold'];
 catlightning['Text'] = "Lightning";
-catlightning['TextColor3'] = Color3.fromRGB(255, 161, 163);
+catlightning['TextColor3'] = Color3.fromRGB(222, 170, 255);
 catlightning['TextScaled'] = true;
 catlightning['TextSize'] = 14;
 catlightning['TextWrapped'] = true;
+esphealth['Name'] = "esphealth";
+esphealth['Parent'] = TABvislightning;
+esphealth['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
+esphealth['BorderColor3'] = Color3.fromRGB(27, 42, 53);
+esphealth['BorderSizePixel'] = 0;
+esphealth['LayoutOrder'] = -998;
+esphealth['Position'] = UDim2.new(0, 0, 0.408719361, 0);
+esphealth['Size'] = UDim2.new(0, 388, 0, 36);
+esphealth['Font'] = Enum['Font']['GothamBold'];
+esphealth['Text'] = "ESP Health";
+esphealth['TextColor3'] = Color3.fromRGB(255, 73, 75);
+esphealth['TextSize'] = 30;
+esp2dbox['Name'] = "esp2dbox";
+esp2dbox['Parent'] = TABvislightning;
+esp2dbox['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
+esp2dbox['BorderColor3'] = Color3.fromRGB(27, 42, 53);
+esp2dbox['BorderSizePixel'] = 0;
+esp2dbox['LayoutOrder'] = -998;
+esp2dbox['Position'] = UDim2.new(0, 0, 0.408719361, 0);
+esp2dbox['Size'] = UDim2.new(0, 388, 0, 36);
+esp2dbox['Font'] = Enum['Font']['GothamBold'];
+esp2dbox['Text'] = "ESP 2D Box";
+esp2dbox['TextColor3'] = Color3.fromRGB(255, 73, 75);
+esp2dbox['TextSize'] = 30;
+esp3dbox['Name'] = "esp3dbox";
+esp3dbox['Parent'] = TABvislightning;
+esp3dbox['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
+esp3dbox['BorderColor3'] = Color3.fromRGB(27, 42, 53);
+esp3dbox['BorderSizePixel'] = 0;
+esp3dbox['LayoutOrder'] = -998;
+esp3dbox['Position'] = UDim2.new(0, 0, 0.408719361, 0);
+esp3dbox['Size'] = UDim2.new(0, 388, 0, 36);
+esp3dbox['Font'] = Enum['Font']['GothamBold'];
+esp3dbox['Text'] = "ESP 3D Box";
+esp3dbox['TextColor3'] = Color3.fromRGB(255, 73, 75);
+esp3dbox['TextSize'] = 30;
 TABTeleports['Name'] = "TAB:Teleports";
 TABTeleports['Parent'] = main;
 TABTeleports['Active'] = true;
-TABTeleports['BackgroundColor3'] = Color3.fromRGB(38, 38, 38);
+TABTeleports['BackgroundColor3'] = Color3.fromRGB(33, 33, 33);
 TABTeleports['BorderColor3'] = Color3.fromRGB(158, 87, 88);
+TABTeleports['BorderSizePixel'] = 0;
 TABTeleports['Position'] = UDim2.new(0.307999998, 0, 0.136999995, 0);
 TABTeleports['Size'] = UDim2.new(0, 395, 0, 308);
 TABTeleports['Visible'] = false;
 TABTeleports['ScrollBarThickness'] = 4;
 title_7['Name'] = "title";
 title_7['Parent'] = TABTeleports;
-title_7['BackgroundColor3'] = Color3.fromRGB(36, 36, 36);
+title_7['BackgroundColor3'] = Color3.fromRGB(29, 29, 29);
+title_7['BackgroundTransparency'] = 0.5;
 title_7['BorderSizePixel'] = 0;
 title_7['LayoutOrder'] = -310437;
 title_7['Size'] = UDim2.new(0, 398, 0, 30);
 title_7['Font'] = Enum['Font']['GothamBold'];
 title_7['Text'] = "Teleports";
-title_7['TextColor3'] = Color3.fromRGB(255, 161, 163);
+title_7['TextColor3'] = Color3.fromRGB(222, 170, 255);
 title_7['TextScaled'] = true;
 title_7['TextSize'] = 14;
 title_7['TextWrapped'] = true;
@@ -753,7 +715,7 @@ tpToSchool['Position'] = UDim2.new(-0.200831026, 0, 0.113636367, 0);
 tpToSchool['Size'] = UDim2.new(0, 388, 0, 36);
 tpToSchool['Font'] = Enum['Font']['GothamBold'];
 tpToSchool['Text'] = "School";
-tpToSchool['TextColor3'] = Color3.fromRGB(255, 161, 163);
+tpToSchool['TextColor3'] = Color3.fromRGB(222, 170, 255);
 tpToSchool['TextSize'] = 34;
 tpToSchool['TextWrapped'] = true;
 tpToDownHillGUNZ['Name'] = "tpToDownHillGUNZ";
@@ -766,7 +728,7 @@ tpToDownHillGUNZ['Position'] = UDim2.new(-0.200831026, 0, 0.272727281, 0);
 tpToDownHillGUNZ['Size'] = UDim2.new(0, 388, 0, 36);
 tpToDownHillGUNZ['Font'] = Enum['Font']['GothamBold'];
 tpToDownHillGUNZ['Text'] = "Downhill Gunz";
-tpToDownHillGUNZ['TextColor3'] = Color3.fromRGB(255, 161, 163);
+tpToDownHillGUNZ['TextColor3'] = Color3.fromRGB(222, 170, 255);
 tpToDownHillGUNZ['TextSize'] = 34;
 tpToDownHillGUNZ['TextWrapped'] = true;
 tpToBank['Name'] = "tpToBank";
@@ -778,7 +740,7 @@ tpToBank['Position'] = UDim2.new(-0.200831026, 0, 0.431818187, 0);
 tpToBank['Size'] = UDim2.new(0, 388, 0, 36);
 tpToBank['Font'] = Enum['Font']['GothamBold'];
 tpToBank['Text'] = "Bank";
-tpToBank['TextColor3'] = Color3.fromRGB(255, 161, 163);
+tpToBank['TextColor3'] = Color3.fromRGB(222, 170, 255);
 tpToBank['TextSize'] = 34;
 tpToBank['TextWrapped'] = true;
 Prison['Name'] = "Prison";
@@ -790,7 +752,7 @@ Prison['Position'] = UDim2.new(-0.200831026, 0, 0.590909064, 0);
 Prison['Size'] = UDim2.new(0, 388, 0, 36);
 Prison['Font'] = Enum['Font']['GothamBold'];
 Prison['Text'] = "Prison";
-Prison['TextColor3'] = Color3.fromRGB(255, 161, 163);
+Prison['TextColor3'] = Color3.fromRGB(222, 170, 255);
 Prison['TextSize'] = 34;
 Prison['TextWrapped'] = true;
 MediumArmor['Name'] = "Medium Armor";
@@ -803,7 +765,7 @@ MediumArmor['Position'] = UDim2.new(-0.200831026, 0, 0.75, 0);
 MediumArmor['Size'] = UDim2.new(0, 388, 0, 36);
 MediumArmor['Font'] = Enum['Font']['GothamBold'];
 MediumArmor['Text'] = "High-Medium Armor";
-MediumArmor['TextColor3'] = Color3.fromRGB(255, 161, 163);
+MediumArmor['TextColor3'] = Color3.fromRGB(222, 170, 255);
 MediumArmor['TextSize'] = 34;
 MediumArmor['TextWrapped'] = true;
 Cinema['Name'] = "Cinema";
@@ -815,7 +777,7 @@ Cinema['Position'] = UDim2.new(-0.200831026, 0, 0.909090936, 0);
 Cinema['Size'] = UDim2.new(0, 388, 0, 36);
 Cinema['Font'] = Enum['Font']['GothamBold'];
 Cinema['Text'] = "Cinema";
-Cinema['TextColor3'] = Color3.fromRGB(255, 161, 163);
+Cinema['TextColor3'] = Color3.fromRGB(222, 170, 255);
 Cinema['TextSize'] = 34;
 Cinema['TextWrapped'] = true;
 Casino['Name'] = "Casino";
@@ -827,7 +789,7 @@ Casino['Position'] = UDim2.new(-0.200831026, 0, 1.06818187, 0);
 Casino['Size'] = UDim2.new(0, 388, 0, 36);
 Casino['Font'] = Enum['Font']['GothamBold'];
 Casino['Text'] = "Casino";
-Casino['TextColor3'] = Color3.fromRGB(255, 161, 163);
+Casino['TextColor3'] = Color3.fromRGB(222, 170, 255);
 Casino['TextSize'] = 34;
 Casino['TextWrapped'] = true;
 catguns['Name'] = "catguns";
@@ -840,7 +802,7 @@ catguns['Position'] = UDim2.new(-0.00554016605, 0, 0.113636367, 0);
 catguns['Size'] = UDim2.new(0, 365, 0, 16);
 catguns['Font'] = Enum['Font']['GothamBold'];
 catguns['Text'] = "Guns/Buys";
-catguns['TextColor3'] = Color3.fromRGB(255, 161, 163);
+catguns['TextColor3'] = Color3.fromRGB(222, 170, 255);
 catguns['TextScaled'] = true;
 catguns['TextSize'] = 14;
 catguns['TextWrapped'] = true;
@@ -854,7 +816,7 @@ catplaces['Position'] = UDim2.new(-0.00554016605, 0, 0.113636367, 0);
 catplaces['Size'] = UDim2.new(0, 365, 0, 16);
 catplaces['Font'] = Enum['Font']['GothamBold'];
 catplaces['Text'] = "Places";
-catplaces['TextColor3'] = Color3.fromRGB(255, 161, 163);
+catplaces['TextColor3'] = Color3.fromRGB(222, 170, 255);
 catplaces['TextScaled'] = true;
 catplaces['TextSize'] = 14;
 catplaces['TextWrapped'] = true;
@@ -868,7 +830,7 @@ DoubleBarrel['Position'] = UDim2.new(-0.200831026, 0, 0.75, 0);
 DoubleBarrel['Size'] = UDim2.new(0, 388, 0, 36);
 DoubleBarrel['Font'] = Enum['Font']['GothamBold'];
 DoubleBarrel['Text'] = "Double Barrel";
-DoubleBarrel['TextColor3'] = Color3.fromRGB(255, 161, 163);
+DoubleBarrel['TextColor3'] = Color3.fromRGB(222, 170, 255);
 DoubleBarrel['TextSize'] = 34;
 DoubleBarrel['TextWrapped'] = true;
 Revolver['Name'] = "Revolver";
@@ -881,7 +843,7 @@ Revolver['Position'] = UDim2.new(-0.200831026, 0, 0.75, 0);
 Revolver['Size'] = UDim2.new(0, 388, 0, 36);
 Revolver['Font'] = Enum['Font']['GothamBold'];
 Revolver['Text'] = "Revolver";
-Revolver['TextColor3'] = Color3.fromRGB(255, 161, 163);
+Revolver['TextColor3'] = Color3.fromRGB(222, 170, 255);
 Revolver['TextSize'] = 34;
 Revolver['TextWrapped'] = true;
 UphillGunz['Name'] = "Uphill Gunz";
@@ -894,7 +856,7 @@ UphillGunz['Position'] = UDim2.new(-0.200831026, 0, 0.75, 0);
 UphillGunz['Size'] = UDim2.new(0, 388, 0, 36);
 UphillGunz['Font'] = Enum['Font']['GothamBold'];
 UphillGunz['Text'] = "Uphill Gunz";
-UphillGunz['TextColor3'] = Color3.fromRGB(255, 161, 163);
+UphillGunz['TextColor3'] = Color3.fromRGB(222, 170, 255);
 UphillGunz['TextSize'] = 34;
 UphillGunz['TextWrapped'] = true;
 FoodShop1['Name'] = "Food Shop #1";
@@ -907,7 +869,7 @@ FoodShop1['Position'] = UDim2.new(-0.200831026, 0, 0.75, 0);
 FoodShop1['Size'] = UDim2.new(0, 388, 0, 36);
 FoodShop1['Font'] = Enum['Font']['GothamBold'];
 FoodShop1['Text'] = "Food Shop #1";
-FoodShop1['TextColor3'] = Color3.fromRGB(255, 161, 163);
+FoodShop1['TextColor3'] = Color3.fromRGB(222, 170, 255);
 FoodShop1['TextSize'] = 34;
 FoodShop1['TextWrapped'] = true;
 FoodShop2['Name'] = "Food Shop #2";
@@ -920,7 +882,7 @@ FoodShop2['Position'] = UDim2.new(-0.200831026, 0, 0.75, 0);
 FoodShop2['Size'] = UDim2.new(0, 388, 0, 36);
 FoodShop2['Font'] = Enum['Font']['GothamBold'];
 FoodShop2['Text'] = "Food Shop #2";
-FoodShop2['TextColor3'] = Color3.fromRGB(255, 161, 163);
+FoodShop2['TextColor3'] = Color3.fromRGB(222, 170, 255);
 FoodShop2['TextSize'] = 34;
 FoodShop2['TextWrapped'] = true;
 catsave['Name'] = "catsave";
@@ -933,7 +895,7 @@ catsave['Position'] = UDim2.new(-0.00554016605, 0, 0.113636367, 0);
 catsave['Size'] = UDim2.new(0, 365, 0, 16);
 catsave['Font'] = Enum['Font']['GothamBold'];
 catsave['Text'] = "Waypoint";
-catsave['TextColor3'] = Color3.fromRGB(255, 161, 163);
+catsave['TextColor3'] = Color3.fromRGB(222, 170, 255);
 catsave['TextScaled'] = true;
 catsave['TextSize'] = 14;
 catsave['TextWrapped'] = true;
@@ -947,7 +909,7 @@ tpsave['Position'] = UDim2.new(-0.200831026, 0, 1.06818187, 0);
 tpsave['Size'] = UDim2.new(0, 388, 0, 36);
 tpsave['Font'] = Enum['Font']['GothamBold'];
 tpsave['Text'] = "Save";
-tpsave['TextColor3'] = Color3.fromRGB(255, 161, 163);
+tpsave['TextColor3'] = Color3.fromRGB(222, 170, 255);
 tpsave['TextSize'] = 34;
 tpsave['TextWrapped'] = true;
 tpload['Name'] = "tpload";
@@ -960,13 +922,14 @@ tpload['Position'] = UDim2.new(-0.200831026, 0, 1.06818187, 0);
 tpload['Size'] = UDim2.new(0, 388, 0, 36);
 tpload['Font'] = Enum['Font']['GothamBold'];
 tpload['Text'] = "Load";
-tpload['TextColor3'] = Color3.fromRGB(255, 161, 163);
+tpload['TextColor3'] = Color3.fromRGB(222, 170, 255);
 tpload['TextSize'] = 34;
 tpload['TextWrapped'] = true;
 TABAbout['Name'] = "TAB:About";
 TABAbout['Parent'] = main;
-TABAbout['BackgroundColor3'] = Color3.fromRGB(38, 38, 38);
+TABAbout['BackgroundColor3'] = Color3.fromRGB(33, 33, 33);
 TABAbout['BorderColor3'] = Color3.fromRGB(158, 87, 88);
+TABAbout['BorderSizePixel'] = 0;
 TABAbout['Position'] = UDim2.new(0.307999998, 0, 0.136999995, 0);
 TABAbout['Size'] = UDim2.new(0, 395, 0, 308);
 TABAbout['Visible'] = false;
@@ -975,11 +938,11 @@ TextLabel['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
 TextLabel['BackgroundTransparency'] = 0.55;
 TextLabel['BorderColor3'] = Color3.fromRGB(27, 42, 53);
 TextLabel['BorderSizePixel'] = 0;
-TextLabel['Position'] = UDim2.new(0.0925000012, 0, 0.129870132, 0);
-TextLabel['Size'] = UDim2.new(0, 377, 0, 32);
+TextLabel['Position'] = UDim2.new(0.0227848105, 0, 0.129870132, 0);
+TextLabel['Size'] = UDim2.new(0, 377, 0, 22);
 TextLabel['Font'] = Enum['Font']['GothamBold'];
-TextLabel['Text'] = "REWRITTEN BY CRYPTIC (aka Axtra)";
-TextLabel['TextColor3'] = Color3.fromRGB(255, 161, 163);
+TextLabel['Text'] = "REWRITTEN BY CRYPTIC";
+TextLabel['TextColor3'] = Color3.fromRGB(222, 170, 255);
 TextLabel['TextScaled'] = true;
 TextLabel['TextSize'] = 25;
 TextLabel['TextWrapped'] = true;
@@ -990,11 +953,11 @@ TextLabel_2['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
 TextLabel_2['BackgroundTransparency'] = 0.55;
 TextLabel_2['BorderColor3'] = Color3.fromRGB(27, 42, 53);
 TextLabel_2['BorderSizePixel'] = 0;
-TextLabel_2['Position'] = UDim2.new(0.0925000012, 0, 0.266233772, 0);
-TextLabel_2['Size'] = UDim2.new(0, 377, 0, 32);
+TextLabel_2['Position'] = UDim2.new(0.0227848105, 0, 0.227396041, 0);
+TextLabel_2['Size'] = UDim2.new(0, 377, 0, 22);
 TextLabel_2['Font'] = Enum['Font']['GothamBold'];
-TextLabel_2['Text'] = "Rewritten - Originally made by VVNSO and CRYPTIC (aka Axtra)";
-TextLabel_2['TextColor3'] = Color3.fromRGB(255, 161, 163);
+TextLabel_2['Text'] = "Rewritten - Originally made by VVNSO and CRYPTIC";
+TextLabel_2['TextColor3'] = Color3.fromRGB(222, 170, 255);
 TextLabel_2['TextScaled'] = true;
 TextLabel_2['TextSize'] = 17;
 TextLabel_2['TextWrapped'] = true;
@@ -1006,14 +969,15 @@ UIListLayout_6['SortOrder'] = Enum['SortOrder']['LayoutOrder'];
 UIListLayout_6['Padding'] = UDim.new(0, 10);
 title_8['Name'] = "title";
 title_8['Parent'] = TABAbout;
-title_8['BackgroundColor3'] = Color3.fromRGB(36, 36, 36);
+title_8['BackgroundColor3'] = Color3.fromRGB(29, 29, 29);
+title_8['BackgroundTransparency'] = 0.5;
 title_8['BorderSizePixel'] = 0;
 title_8['LayoutOrder'] = -310437;
 title_8['Position'] = UDim2.new(-0.0101265823, 0, 0, 0);
 title_8['Size'] = UDim2.new(0, 395, 0, 30);
 title_8['Font'] = Enum['Font']['GothamBold'];
 title_8['Text'] = "About";
-title_8['TextColor3'] = Color3.fromRGB(255, 161, 163);
+title_8['TextColor3'] = Color3.fromRGB(227, 117, 255);
 title_8['TextScaled'] = true;
 title_8['TextSize'] = 14;
 title_8['TextWrapped'] = true;
@@ -1024,8 +988,8 @@ ScrollingFrame['BackgroundTransparency'] = 0.55;
 ScrollingFrame['BorderColor3'] = Color3.fromRGB(0, 0, 0);
 ScrollingFrame['BorderSizePixel'] = 0;
 ScrollingFrame['LayoutOrder'] = 3;
-ScrollingFrame['Position'] = UDim2.new(0.0240506325, 0, 0.538961053, 0);
-ScrollingFrame['Size'] = UDim2.new(0, 376, 0, 136);
+ScrollingFrame['Position'] = UDim2.new(0.0240506325, 0, 0.545454562, 0);
+ScrollingFrame['Size'] = UDim2.new(0, 376, 0, 126);
 ScrollingFrame['ScrollBarThickness'] = 4;
 TextLabel_3['Parent'] = ScrollingFrame;
 TextLabel_3['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
@@ -1035,8 +999,8 @@ TextLabel_3['BorderSizePixel'] = 0;
 TextLabel_3['LayoutOrder'] = -2;
 TextLabel_3['Size'] = UDim2.new(0, 375, 0, 34);
 TextLabel_3['Font'] = Enum['Font']['GothamBold'];
-TextLabel_3['Text'] = "SCRIPT VERSION: 3.1";
-TextLabel_3['TextColor3'] = Color3.fromRGB(255, 161, 163);
+TextLabel_3['Text'] = "SCRIPT VERSION: 3.2";
+TextLabel_3['TextColor3'] = Color3.fromRGB(222, 170, 255);
 TextLabel_3['TextScaled'] = true;
 TextLabel_3['TextSize'] = 42;
 TextLabel_3['TextWrapped'] = true;
@@ -1052,8 +1016,8 @@ TextLabel_4['LayoutOrder'] = 1;
 TextLabel_4['Position'] = UDim2.new(0, 0, 0.447058827, 0);
 TextLabel_4['Size'] = UDim2.new(0, 375, 0, 34);
 TextLabel_4['Font'] = Enum['Font']['Unknown'];
-TextLabel_4['Text'] = "[+] GUI REDESIGN (RECOLOR)";
-TextLabel_4['TextColor3'] = Color3.fromRGB(255, 161, 163);
+TextLabel_4['Text'] = "[+] Rewritten all ESPs";
+TextLabel_4['TextColor3'] = Color3.fromRGB(222, 170, 255);
 TextLabel_4['TextScaled'] = true;
 TextLabel_4['TextSize'] = 14;
 TextLabel_4['TextWrapped'] = true;
@@ -1067,8 +1031,8 @@ TextLabel_5['LayoutOrder'] = 1;
 TextLabel_5['Position'] = UDim2.new(0, 0, 0.676470578, 0);
 TextLabel_5['Size'] = UDim2.new(0, 375, 0, 34);
 TextLabel_5['Font'] = Enum['Font']['Unknown'];
-TextLabel_5['Text'] = "[+] NEW FUNCTIONS";
-TextLabel_5['TextColor3'] = Color3.fromRGB(255, 161, 163);
+TextLabel_5['Text'] = "[+] ESPs are now toggles";
+TextLabel_5['TextColor3'] = Color3.fromRGB(222, 170, 255);
 TextLabel_5['TextScaled'] = true;
 TextLabel_5['TextSize'] = 14;
 TextLabel_5['TextWrapped'] = true;
@@ -1082,233 +1046,346 @@ TextLabel_6['LayoutOrder'] = 1;
 TextLabel_6['Position'] = UDim2.new(0, 0, 0.905882359, 0);
 TextLabel_6['Size'] = UDim2.new(0, 375, 0, 34);
 TextLabel_6['Font'] = Enum['Font']['Unknown'];
-TextLabel_6['Text'] = "[+] BUG FIXES";
-TextLabel_6['TextColor3'] = Color3.fromRGB(255, 161, 163);
+TextLabel_6['Text'] = "[+] Bug Fixes";
+TextLabel_6['TextColor3'] = Color3.fromRGB(222, 170, 255);
 TextLabel_6['TextScaled'] = true;
 TextLabel_6['TextSize'] = 14;
 TextLabel_6['TextWrapped'] = true;
 TextLabel_6['TextXAlignment'] = Enum['TextXAlignment']['Left'];
-TextLabel_7['Parent'] = TABAbout;
+TextLabel_7['Parent'] = ScrollingFrame;
 TextLabel_7['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
 TextLabel_7['BackgroundTransparency'] = 0.55;
-TextLabel_7['BorderColor3'] = Color3.fromRGB(27, 42, 53);
+TextLabel_7['BorderColor3'] = Color3.fromRGB(0, 0, 0);
 TextLabel_7['BorderSizePixel'] = 0;
-TextLabel_7['Position'] = UDim2.new(0.0925000012, 0, 0.266233772, 0);
-TextLabel_7['Size'] = UDim2.new(0, 377, 0, 32);
-TextLabel_7['Font'] = Enum['Font']['GothamBold'];
-TextLabel_7['Text'] = "DISCORD: crypticww";
-TextLabel_7['TextColor3'] = Color3.fromRGB(255, 161, 163);
+TextLabel_7['Position'] = UDim2.new(0, 0, 0.447058827, 0);
+TextLabel_7['Size'] = UDim2.new(0, 375, 0, 34);
+TextLabel_7['Font'] = Enum['Font']['Unknown'];
+TextLabel_7['Text'] = "[+] Added Target Tab (more soon)";
+TextLabel_7['TextColor3'] = Color3.fromRGB(222, 170, 255);
 TextLabel_7['TextScaled'] = true;
-TextLabel_7['TextSize'] = 17;
+TextLabel_7['TextSize'] = 14;
 TextLabel_7['TextWrapped'] = true;
 TextLabel_7['TextXAlignment'] = Enum['TextXAlignment']['Left'];
-TextLabel_7['TextYAlignment'] = Enum['TextYAlignment']['Top'];
+TextLabel_8['Parent'] = TABAbout;
+TextLabel_8['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
+TextLabel_8['BackgroundTransparency'] = 0.55;
+TextLabel_8['BorderColor3'] = Color3.fromRGB(27, 42, 53);
+TextLabel_8['BorderSizePixel'] = 0;
+TextLabel_8['Position'] = UDim2.new(0.0227848105, 0, 0.324921846, 0);
+TextLabel_8['Size'] = UDim2.new(0, 377, 0, 22);
+TextLabel_8['Font'] = Enum['Font']['GothamBold'];
+TextLabel_8['Text'] = "DISCORD: crypticww";
+TextLabel_8['TextColor3'] = Color3.fromRGB(222, 170, 255);
+TextLabel_8['TextScaled'] = true;
+TextLabel_8['TextSize'] = 17;
+TextLabel_8['TextWrapped'] = true;
+TextLabel_8['TextXAlignment'] = Enum['TextXAlignment']['Left'];
+TextLabel_8['TextYAlignment'] = Enum['TextYAlignment']['Top'];
+TextLabel_9['Parent'] = TABAbout;
+TextLabel_9['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
+TextLabel_9['BackgroundTransparency'] = 0.55;
+TextLabel_9['BorderColor3'] = Color3.fromRGB(27, 42, 53);
+TextLabel_9['BorderSizePixel'] = 0;
+TextLabel_9['Position'] = UDim2.new(0.0227848105, 0, 0.422447711, 0);
+TextLabel_9['Size'] = UDim2.new(0, 377, 0, 22);
+TextLabel_9['Font'] = Enum['Font']['GothamBold'];
+TextLabel_9['Text'] = "Kroton is still in development so expect bugs";
+TextLabel_9['TextColor3'] = Color3.fromRGB(222, 170, 255);
+TextLabel_9['TextScaled'] = true;
+TextLabel_9['TextSize'] = 17;
+TextLabel_9['TextWrapped'] = true;
+TextLabel_9['TextXAlignment'] = Enum['TextXAlignment']['Left'];
+TextLabel_9['TextYAlignment'] = Enum['TextYAlignment']['Top'];
+TextLabel_10['Parent'] = main;
+TextLabel_10['BackgroundColor3'] = Color3.fromRGB(255, 255, 255);
+TextLabel_10['BackgroundTransparency'] = 1;
+TextLabel_10['BorderColor3'] = Color3.fromRGB(0, 0, 0);
+TextLabel_10['BorderSizePixel'] = 0;
+TextLabel_10['Position'] = UDim2.new(0.415254295, 0, 0.489071041, 0);
+TextLabel_10['Size'] = UDim2.new(0, 265, 0, 50);
+TextLabel_10['Visible'] = false;
+TextLabel_10['Font'] = Enum['Font']['Unknown'];
+TextLabel_10['Text'] = "how are you reading this?";
+TextLabel_10['TextColor3'] = Color3.fromRGB(222, 170, 255);
+TextLabel_10['TextScaled'] = true;
+TextLabel_10['TextSize'] = 14;
+TextLabel_10['TextWrapped'] = true;
 buttons['Name'] = "buttons";
 buttons['Parent'] = main;
-buttons['Active'] = true;
-buttons['BackgroundColor3'] = Color3.fromRGB(38, 38, 38);
-buttons['BorderColor3'] = Color3.fromRGB(158, 87, 88);
-buttons['Position'] = UDim2.new(0.0152542377, 0, 0.136828229, 0);
-buttons['Size'] = UDim2.new(0, 161, 0, 308);
-buttons['CanvasSize'] = UDim2.new(0, 0, 1.20000005, 0);
-buttons['ScrollBarThickness'] = 3;
-About['Name'] = "About";
-About['Parent'] = buttons;
-About['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
-About['BorderColor3'] = Color3.fromRGB(27, 42, 53);
-About['Position'] = UDim2.new(0.0490706451, 0, 0.612954736, 0);
-About['Size'] = UDim2.new(0, 185, 0, 45);
-About['Font'] = Enum['Font']['Unknown'];
-About['Text'] = "About";
-About['TextColor3'] = Color3.fromRGB(255, 161, 163);
-About['TextSize'] = 30;
-About['TextStrokeColor3'] = Color3.fromRGB(255, 0, 4);
-UICorner_9['CornerRadius'] = UDim.new(0, 2);
-UICorner_9['Parent'] = About;
-Home['Name'] = "Home";
-Home['Parent'] = buttons;
-Home['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
-Home['BorderColor3'] = Color3.fromRGB(27, 42, 53);
-Home['LayoutOrder'] = -30;
-Home['Position'] = UDim2.new(0, 0, 0.152597398, 0);
-Home['Size'] = UDim2.new(0, 185, 0, 45);
-Home['Font'] = Enum['Font']['Unknown'];
-Home['Text'] = "Home";
-Home['TextColor3'] = Color3.fromRGB(255, 161, 163);
-Home['TextSize'] = 30;
-Home['TextStrokeColor3'] = Color3.fromRGB(255, 0, 4);
-UICorner_10['CornerRadius'] = UDim.new(0, 2);
-UICorner_10['Parent'] = Home;
-MainScriptsButton['Name'] = "MainScriptsButton";
-MainScriptsButton['Parent'] = buttons;
-MainScriptsButton['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
-MainScriptsButton['BorderColor3'] = Color3.fromRGB(27, 42, 53);
-MainScriptsButton['LayoutOrder'] = -29;
-MainScriptsButton['Position'] = UDim2.new(0.0490706451, 0, 0.137461171, 0);
-MainScriptsButton['Size'] = UDim2.new(0, 185, 0, 45);
-MainScriptsButton['Font'] = Enum['Font']['Unknown'];
-MainScriptsButton['Text'] = "Main";
-MainScriptsButton['TextColor3'] = Color3.fromRGB(255, 161, 163);
-MainScriptsButton['TextSize'] = 30;
-MainScriptsButton['TextStrokeColor3'] = Color3.fromRGB(255, 0, 4);
-UICorner_11['CornerRadius'] = UDim.new(0, 2);
-UICorner_11['Parent'] = MainScriptsButton;
-Combat['Name'] = "Combat";
-Combat['Parent'] = buttons;
-Combat['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
-Combat['BorderColor3'] = Color3.fromRGB(27, 42, 53);
-Combat['LayoutOrder'] = -28;
-Combat['Position'] = UDim2.new(0.0490706451, 0, 0.250029296, 0);
-Combat['Size'] = UDim2.new(0, 185, 0, 45);
-Combat['Font'] = Enum['Font']['Unknown'];
-Combat['Text'] = "Combat";
-Combat['TextColor3'] = Color3.fromRGB(255, 161, 163);
-Combat['TextSize'] = 30;
-Combat['TextStrokeColor3'] = Color3.fromRGB(255, 0, 4);
-UICorner_12['CornerRadius'] = UDim.new(0, 2);
-UICorner_12['Parent'] = Combat;
+buttons['BackgroundColor3'] = Color3.fromRGB(33, 33, 33);
+buttons['BorderColor3'] = Color3.fromRGB(0, 0, 0);
+buttons['BorderSizePixel'] = 0;
+buttons['Position'] = UDim2.new(0, 0, 0.122950822, 0);
+buttons['Size'] = UDim2.new(0, 170, 0, 321);
 VisualLightning['Name'] = "Visual/Lightning";
 VisualLightning['Parent'] = buttons;
 VisualLightning['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
 VisualLightning['BorderColor3'] = Color3.fromRGB(27, 42, 53);
 VisualLightning['LayoutOrder'] = -27;
-VisualLightning['Position'] = UDim2.new(0.0490706451, 0, 0.365091175, 0);
-VisualLightning['Size'] = UDim2.new(0, 185, 0, 45);
+VisualLightning['Position'] = UDim2.new(0.052941177, 0, 0.579437852, 0);
+VisualLightning['Size'] = UDim2.new(0, 152, 0, 38);
 VisualLightning['Font'] = Enum['Font']['Unknown'];
 VisualLightning['Text'] = "Visual/Lightning";
-VisualLightning['TextColor3'] = Color3.fromRGB(255, 161, 163);
+VisualLightning['TextColor3'] = Color3.fromRGB(222, 170, 255);
 VisualLightning['TextSize'] = 22;
 VisualLightning['TextStrokeColor3'] = Color3.fromRGB(255, 0, 4);
 VisualLightning['TextWrapped'] = true;
-UICorner_13['CornerRadius'] = UDim.new(0, 2);
-UICorner_13['Parent'] = VisualLightning;
+UICorner_9['CornerRadius'] = UDim.new(0, 4);
+UICorner_9['Parent'] = VisualLightning;
 Teleports['Name'] = "Teleports";
 Teleports['Parent'] = buttons;
 Teleports['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
 Teleports['BorderColor3'] = Color3.fromRGB(27, 42, 53);
 Teleports['LayoutOrder'] = -26;
-Teleports['Position'] = UDim2.new(0.0490706451, 0, 0.488529176, 0);
-Teleports['Size'] = UDim2.new(0, 185, 0, 45);
+Teleports['Position'] = UDim2.new(0.052941177, 0, 0.718066752, 0);
+Teleports['Size'] = UDim2.new(0, 152, 0, 38);
 Teleports['Font'] = Enum['Font']['Unknown'];
 Teleports['Text'] = "Teleports";
-Teleports['TextColor3'] = Color3.fromRGB(255, 161, 163);
+Teleports['TextColor3'] = Color3.fromRGB(222, 170, 255);
 Teleports['TextSize'] = 30;
 Teleports['TextStrokeColor3'] = Color3.fromRGB(255, 0, 4);
-UICorner_14['CornerRadius'] = UDim.new(0, 2);
-UICorner_14['Parent'] = Teleports;
+UICorner_10['CornerRadius'] = UDim.new(0, 4);
+UICorner_10['Parent'] = Teleports;
+Main['Name'] = "Main";
+Main['Parent'] = buttons;
+Main['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
+Main['BorderColor3'] = Color3.fromRGB(27, 42, 53);
+Main['LayoutOrder'] = -29;
+Main['Position'] = UDim2.new(0.052941177, 0, 0.163551018, 0);
+Main['Size'] = UDim2.new(0, 152, 0, 38);
+Main['Font'] = Enum['Font']['Unknown'];
+Main['Text'] = "Main";
+Main['TextColor3'] = Color3.fromRGB(222, 170, 255);
+Main['TextSize'] = 30;
+Main['TextStrokeColor3'] = Color3.fromRGB(255, 0, 4);
+UICorner_11['CornerRadius'] = UDim.new(0, 4);
+UICorner_11['Parent'] = Main;
+Home['Name'] = "Home";
+Home['Parent'] = buttons;
+Home['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
+Home['BorderColor3'] = Color3.fromRGB(27, 42, 53);
+Home['LayoutOrder'] = -30;
+Home['Position'] = UDim2.new(0.052941177, 0, 0.024922166, 0);
+Home['Size'] = UDim2.new(0, 152, 0, 38);
+Home['Font'] = Enum['Font']['Unknown'];
+Home['Text'] = "Home";
+Home['TextColor3'] = Color3.fromRGB(222, 170, 255);
+Home['TextSize'] = 30;
+Home['TextStrokeColor3'] = Color3.fromRGB(255, 0, 4);
+UICorner_12['CornerRadius'] = UDim.new(0, 4);
+UICorner_12['Parent'] = Home;
+Combat['Name'] = "Combat";
+Combat['Parent'] = buttons;
+Combat['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
+Combat['BorderColor3'] = Color3.fromRGB(27, 42, 53);
+Combat['LayoutOrder'] = -28;
+Combat['Position'] = UDim2.new(0.052941177, 0, 0.302179933, 0);
+Combat['Size'] = UDim2.new(0, 152, 0, 38);
+Combat['Font'] = Enum['Font']['Unknown'];
+Combat['Text'] = "Combat";
+Combat['TextColor3'] = Color3.fromRGB(222, 170, 255);
+Combat['TextSize'] = 30;
+Combat['TextStrokeColor3'] = Color3.fromRGB(255, 0, 4);
+UICorner_13['CornerRadius'] = UDim.new(0, 4);
+UICorner_13['Parent'] = Combat;
+About['Name'] = "About";
+About['Parent'] = buttons;
+About['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
+About['BorderColor3'] = Color3.fromRGB(27, 42, 53);
+About['Position'] = UDim2.new(0.052941177, 0, 0.856695414, 0);
+About['Size'] = UDim2.new(0, 152, 0, 38);
+About['Font'] = Enum['Font']['Unknown'];
+About['Text'] = "About";
+About['TextColor3'] = Color3.fromRGB(222, 170, 255);
+About['TextSize'] = 30;
+About['TextStrokeColor3'] = Color3.fromRGB(255, 0, 4);
+UICorner_14['CornerRadius'] = UDim.new(0, 4);
+UICorner_14['Parent'] = About;
 UIListLayout_8['Parent'] = buttons;
 UIListLayout_8['HorizontalAlignment'] = Enum['HorizontalAlignment']['Center'];
 UIListLayout_8['SortOrder'] = Enum['SortOrder']['LayoutOrder'];
-UIListLayout_8['Padding'] = UDim.new(0, 5);
-local function HOBCXSZ_fake_script()
-	local FlatIdent_651C5 = 0;
-	local script;
-	local mouse;
-	while true do
-		if (FlatIdent_651C5 == 0) then
-			script = Instance.new("LocalScript", title);
-			mouse = game['Players']['LocalPlayer']:GetMouse();
-			FlatIdent_651C5 = 1;
+UIListLayout_8['Padding'] = UDim.new(0, 6);
+UICorner_15['CornerRadius'] = UDim.new(0, 4);
+UICorner_15['Parent'] = buttons;
+Target['Name'] = "Target";
+Target['Parent'] = buttons;
+Target['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
+Target['BorderColor3'] = Color3.fromRGB(27, 42, 53);
+Target['LayoutOrder'] = -28;
+Target['Position'] = UDim2.new(0.052941177, 0, 0.440808922, 0);
+Target['Size'] = UDim2.new(0, 152, 0, 38);
+Target['Font'] = Enum['Font']['Unknown'];
+Target['Text'] = "Target";
+Target['TextColor3'] = Color3.fromRGB(222, 170, 255);
+Target['TextSize'] = 30;
+Target['TextStrokeColor3'] = Color3.fromRGB(255, 0, 4);
+UICorner_16['CornerRadius'] = UDim.new(0, 4);
+UICorner_16['Parent'] = Target;
+Frame['Parent'] = buttons;
+Frame['BackgroundColor3'] = Color3.fromRGB(255, 255, 255);
+Frame['BackgroundTransparency'] = 1;
+Frame['BorderColor3'] = Color3.fromRGB(0, 0, 0);
+Frame['BorderSizePixel'] = 0;
+Frame['LayoutOrder'] = -222;
+Frame['Position'] = UDim2.new(0.0264705885, 0, 0, 0);
+Frame['Size'] = UDim2.new(0, 161, 0, 2);
+TABTarget['Name'] = "TAB:Target";
+TABTarget['Parent'] = main;
+TABTarget['Active'] = true;
+TABTarget['BackgroundColor3'] = Color3.fromRGB(33, 33, 33);
+TABTarget['BorderColor3'] = Color3.fromRGB(158, 87, 88);
+TABTarget['BorderSizePixel'] = 0;
+TABTarget['Position'] = UDim2.new(0.307999998, 0, 0.136999995, 0);
+TABTarget['Size'] = UDim2.new(0, 395, 0, 308);
+TABTarget['Visible'] = false;
+TABTarget['CanvasSize'] = UDim2.new(0, 0, 1, 0);
+TABTarget['ScrollBarThickness'] = 4;
+title_9['Name'] = "title";
+title_9['Parent'] = TABTarget;
+title_9['BackgroundColor3'] = Color3.fromRGB(29, 29, 29);
+title_9['BackgroundTransparency'] = 0.5;
+title_9['BorderSizePixel'] = 0;
+title_9['LayoutOrder'] = -310437;
+title_9['Size'] = UDim2.new(0, 398, 0, 30);
+title_9['Font'] = Enum['Font']['GothamBold'];
+title_9['Text'] = "Target";
+title_9['TextColor3'] = Color3.fromRGB(227, 117, 255);
+title_9['TextScaled'] = true;
+title_9['TextSize'] = 14;
+title_9['TextWrapped'] = true;
+UIListLayout_9['Parent'] = TABTarget;
+UIListLayout_9['HorizontalAlignment'] = Enum['HorizontalAlignment']['Center'];
+UIListLayout_9['SortOrder'] = Enum['SortOrder']['LayoutOrder'];
+UIListLayout_9['Padding'] = UDim.new(0, 6);
+plrheadshot['Name'] = "plrheadshot";
+plrheadshot['Parent'] = TABTarget;
+plrheadshot['BackgroundColor3'] = Color3.fromRGB(33, 33, 33);
+plrheadshot['BorderColor3'] = Color3.fromRGB(0, 0, 0);
+plrheadshot['BorderSizePixel'] = 0;
+plrheadshot['Size'] = UDim2.new(0, 100, 0, 100);
+plrheadshot['Image'] = "rbxasset://textures/ui/GuiImagePlaceholder.png";
+UICorner_17['CornerRadius'] = UDim.new(1, 0);
+UICorner_17['Parent'] = plrheadshot;
+plrInput['Name'] = "plrInput";
+plrInput['Parent'] = TABTarget;
+plrInput['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
+plrInput['BorderColor3'] = Color3.fromRGB(0, 0, 0);
+plrInput['BorderSizePixel'] = 0;
+plrInput['Position'] = UDim2.new(0.24683544, 0, 0.454545468, 0);
+plrInput['Size'] = UDim2.new(0, 354, 0, 36);
+plrInput['Font'] = Enum['Font']['Unknown'];
+plrInput['PlaceholderColor3'] = Color3.fromRGB(110, 85, 127);
+plrInput['PlaceholderText'] = "Input Name";
+plrInput['Text'] = "";
+plrInput['TextColor3'] = Color3.fromRGB(236, 139, 255);
+plrInput['TextSize'] = 26;
+plrInput['TextWrapped'] = true;
+UICorner_18['CornerRadius'] = UDim.new(0, 4);
+UICorner_18['Parent'] = plrInput;
+view['Name'] = "view";
+view['Parent'] = TABTarget;
+view['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
+view['BorderColor3'] = Color3.fromRGB(0, 0, 0);
+view['BorderSizePixel'] = 0;
+view['LayoutOrder'] = 2;
+view['Position'] = UDim2.new(0.0582278483, 0, 0.587662339, 0);
+view['Size'] = UDim2.new(0, 349, 0, 29);
+view['Font'] = Enum['Font']['Unknown'];
+view['Text'] = "View";
+view['TextColor3'] = Color3.fromRGB(222, 170, 255);
+view['TextSize'] = 27;
+aimview['Name'] = "aimview";
+aimview['Parent'] = TABTarget;
+aimview['Active'] = false;
+aimview['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
+aimview['BorderColor3'] = Color3.fromRGB(0, 0, 0);
+aimview['BorderSizePixel'] = 0;
+aimview['LayoutOrder'] = 2;
+aimview['Position'] = UDim2.new(0.0582278483, 0, 0.587662339, 0);
+aimview['Size'] = UDim2.new(0, 349, 0, 29);
+aimview['Visible'] = false;
+aimview['Font'] = Enum['Font']['Unknown'];
+aimview['Text'] = "AimView";
+aimview['TextColor3'] = Color3.fromRGB(222, 170, 255);
+aimview['TextSize'] = 27;
+goto['Name'] = "goto";
+goto['Parent'] = TABTarget;
+goto['BackgroundColor3'] = Color3.fromRGB(30, 30, 30);
+goto['BorderColor3'] = Color3.fromRGB(0, 0, 0);
+goto['BorderSizePixel'] = 0;
+goto['LayoutOrder'] = 2;
+goto['Position'] = UDim2.new(0.0582278483, 0, 0.587662339, 0);
+goto['Size'] = UDim2.new(0, 349, 0, 29);
+goto['Font'] = Enum['Font']['Unknown'];
+goto['Text'] = "Go to";
+goto['TextColor3'] = Color3.fromRGB(222, 170, 255);
+goto['TextSize'] = 27;
+title_10['Name'] = "title";
+title_10['Parent'] = TABTarget;
+title_10['BackgroundColor3'] = Color3.fromRGB(222, 170, 255);
+title_10['BackgroundTransparency'] = 1;
+title_10['BorderSizePixel'] = 0;
+title_10['LayoutOrder'] = 3;
+title_10['Position'] = UDim2.new(-0.00379746826, 0, 0.824675322, 0);
+title_10['Size'] = UDim2.new(0, 398, 0, 20);
+title_10['Font'] = Enum['Font']['GothamBold'];
+title_10['Text'] = "more options soon";
+title_10['TextColor3'] = Color3.fromRGB(222, 170, 255);
+title_10['TextScaled'] = true;
+title_10['TextSize'] = 14;
+title_10['TextWrapped'] = true;
+local function KSFW_fake_script()
+	local script = Instance.new("LocalScript", title);
+	local mouse = game['Players']['LocalPlayer']:GetMouse();
+	mouse['KeyDown']:connect(function(key)
+		if ((key:lower() == "v") or (4593 <= 2672)) then
+			script['Parent']['Parent']['Visible'] = not script['Parent']['Parent']['Visible'];
 		end
-		if (FlatIdent_651C5 == 1) then
-			mouse['KeyDown']:connect(function(key)
-				if (key:lower() == "v") then
-					script['Parent']['Parent']['Visible'] = not script['Parent']['Parent']['Visible'];
-				end
-			end);
-			break;
-		end
-	end
+	end);
 end
-coroutine.wrap(HOBCXSZ_fake_script)();
-local function JCFN_fake_script()
-	local FlatIdent_956D = 0;
-	local script;
-	local btn;
-	local screengui;
-	while true do
-		if (FlatIdent_956D == 1) then
-			screengui = btn['Parent']['Parent']['Parent'];
-			btn['MouseButton1Click']:Connect(function()
-				screengui:Destroy();
-			end);
-			break;
-		end
-		if (FlatIdent_956D == 0) then
-			script = Instance.new("LocalScript", clear);
-			btn = script['Parent'];
-			FlatIdent_956D = 1;
-		end
-	end
+coroutine.wrap(KSFW_fake_script)();
+local function NKGIEGR_fake_script()
+	local script = Instance.new("LocalScript", clear);
+	local btn = script['Parent'];
+	local screengui = btn['Parent']['Parent']['Parent'];
+	btn['MouseButton1Click']:Connect(function()
+		screengui:Destroy();
+	end);
 end
-coroutine.wrap(JCFN_fake_script)();
-local function QNBSGI_fake_script()
-	local FlatIdent_512FF = 0;
-	local script;
-	local player;
-	local mouse;
-	local runService;
-	local uiFrame;
-	local followSpeed;
-	local isDragging;
+coroutine.wrap(NKGIEGR_fake_script)();
+local function ZHRZVJ_fake_script()
+	local script = Instance.new("LocalScript", main);
+	local player = game['Players']['LocalPlayer'];
+	local mouse = player:GetMouse();
+	local runService = game:GetService("RunService");
+	local uiFrame = script['Parent'];
+	local followSpeed = 0.15;
+	local isDragging = false;
 	local dragStart;
 	local frameStart;
-	while true do
-		if (FlatIdent_512FF == 2) then
+	uiFrame['InputBegan']:Connect(function(input)
+		if (input['UserInputType'] ~= Enum['UserInputType']['MouseButton1']) then
+		else
+			isDragging = true;
+			dragStart = Vector2.new(mouse.X, mouse.Y);
+			frameStart = uiFrame['Position'];
+		end
+	end);
+	uiFrame['InputEnded']:Connect(function(input)
+		if ((input['UserInputType'] == Enum['UserInputType']['MouseButton1']) or (1168 > 3156)) then
 			isDragging = false;
-			dragStart = nil;
-			frameStart = nil;
-			FlatIdent_512FF = 3;
 		end
-		if (FlatIdent_512FF == 0) then
-			script = Instance.new("LocalScript", main);
-			player = game['Players']['LocalPlayer'];
-			mouse = player:GetMouse();
-			FlatIdent_512FF = 1;
+	end);
+	runService['RenderStepped']:Connect(function()
+		if (isDragging or (572 > 4486)) then
+			local mouseDelta = Vector2.new(mouse.X, mouse.Y) - dragStart;
+			local targetPosition = UDim2.new(frameStart['X'].Scale, frameStart['X']['Offset'] + mouseDelta['X'], frameStart['Y'].Scale, frameStart['Y']['Offset'] + mouseDelta['Y']);
+			uiFrame['Position'] = UDim2.new(uiFrame['Position']['X'].Scale, uiFrame['Position']['X']['Offset'] + ((targetPosition['X']['Offset'] - uiFrame['Position']['X']['Offset']) * followSpeed), uiFrame['Position']['Y'].Scale, uiFrame['Position']['Y']['Offset'] + ((targetPosition['Y']['Offset'] - uiFrame['Position']['Y']['Offset']) * followSpeed));
 		end
-		if (FlatIdent_512FF == 3) then
-			uiFrame['InputBegan']:Connect(function(input)
-				if ((input['UserInputType'] == Enum['UserInputType']['MouseButton1']) or (4593 <= 2672)) then
-					isDragging = true;
-					dragStart = Vector2.new(mouse.X, mouse.Y);
-					frameStart = uiFrame['Position'];
-				end
-			end);
-			uiFrame['InputEnded']:Connect(function(input)
-				if ((input['UserInputType'] == Enum['UserInputType']['MouseButton1']) or (1168 > 3156)) then
-					isDragging = false;
-				end
-			end);
-			runService['RenderStepped']:Connect(function()
-				if isDragging then
-					local FlatIdent_31077 = 0;
-					local mouseDelta;
-					local targetPosition;
-					while true do
-						if (1 == FlatIdent_31077) then
-							uiFrame['Position'] = UDim2.new(uiFrame['Position']['X'].Scale, uiFrame['Position']['X']['Offset'] + ((targetPosition['X']['Offset'] - uiFrame['Position']['X']['Offset']) * followSpeed), uiFrame['Position']['Y'].Scale, uiFrame['Position']['Y']['Offset'] + ((targetPosition['Y']['Offset'] - uiFrame['Position']['Y']['Offset']) * followSpeed));
-							break;
-						end
-						if (FlatIdent_31077 == 0) then
-							mouseDelta = Vector2.new(mouse.X, mouse.Y) - dragStart;
-							targetPosition = UDim2.new(frameStart['X'].Scale, frameStart['X']['Offset'] + mouseDelta['X'], frameStart['Y'].Scale, frameStart['Y']['Offset'] + mouseDelta['Y']);
-							FlatIdent_31077 = 1;
-						end
-					end
-				end
-			end);
-			break;
-		end
-		if (1 == FlatIdent_512FF) then
-			runService = game:GetService("RunService");
-			uiFrame = script['Parent'];
-			followSpeed = 0.15;
-			FlatIdent_512FF = 2;
-		end
-	end
+	end);
 end
-coroutine.wrap(QNBSGI_fake_script)();
-local function DNGPSQT_fake_script()
+coroutine.wrap(ZHRZVJ_fake_script)();
+local function XLLDG_fake_script()
 	local script = Instance.new("LocalScript", speed);
 	script['Parent']['MouseButton1Click']:Connect(function()
 		local UserInputService = game:GetService("UserInputService");
@@ -1321,7 +1398,7 @@ local function DNGPSQT_fake_script()
 		local connections = {};
 		local function updateMovement()
 			local character = player['Character'];
-			if (not character or not character['PrimaryPart']) then
+			if ((1404 == 1404) and (not character or not character['PrimaryPart'])) then
 				return;
 			end
 			local moveDirection = Vector3.new();
@@ -1329,72 +1406,49 @@ local function DNGPSQT_fake_script()
 			if UserInputService:IsKeyDown(Enum['KeyCode'].W) then
 				moveDirection = moveDirection + (camera['CFrame']['LookVector'] * ((isSprinting and sprintSpeed) or normalSpeed));
 			end
-			if UserInputService:IsKeyDown(Enum['KeyCode'].S) then
+			if (UserInputService:IsKeyDown(Enum['KeyCode'].S) or (3748 < 2212)) then
 				moveDirection = moveDirection - (camera['CFrame']['LookVector'] * ((isSprinting and sprintSpeed) or normalSpeed));
 			end
-			if (UserInputService:IsKeyDown(Enum['KeyCode'].A) or (572 > 4486)) then
+			if (UserInputService:IsKeyDown(Enum['KeyCode'].A) or (1180 == 2180)) then
 				moveDirection = moveDirection - (camera['CFrame']['RightVector'] * ((isSprinting and sprintSpeed) or normalSpeed));
 			end
-			if ((1404 == 1404) and UserInputService:IsKeyDown(Enum['KeyCode'].D)) then
+			if ((4090 < 4653) and UserInputService:IsKeyDown(Enum['KeyCode'].D)) then
 				moveDirection = moveDirection + (camera['CFrame']['RightVector'] * ((isSprinting and sprintSpeed) or normalSpeed));
 			end
 			character:SetPrimaryPartCFrame(character['PrimaryPart']['CFrame'] + moveDirection);
 		end
 		local function startScript()
-			local FlatIdent_5AA23 = 0;
-			local character;
-			local humanoid;
-			while true do
-				if (FlatIdent_5AA23 == 2) then
-					table.insert(connections, UserInputService['InputBegan']:Connect(function(input)
-						if ((input['KeyCode'] == Enum['KeyCode']['C']) or (3748 < 2212)) then
-							isSprinting = true;
-						end
-					end));
-					table.insert(connections, UserInputService['InputEnded']:Connect(function(input)
-						if (input['KeyCode'] ~= Enum['KeyCode']['C']) then
-						else
-							isSprinting = false;
-						end
-					end));
-					FlatIdent_5AA23 = 3;
-				end
-				if (FlatIdent_5AA23 == 1) then
-					character = player['Character'] or player['CharacterAdded']:Wait();
-					humanoid = character:WaitForChild("Humanoid");
-					FlatIdent_5AA23 = 2;
-				end
-				if (FlatIdent_5AA23 == 3) then
-					table.insert(connections, RunService['RenderStepped']:Connect(updateMovement));
-					humanoid['Died']:Connect(function()
-						isSprinting = false;
-					end);
-					break;
-				end
-				if (FlatIdent_5AA23 == 0) then
-					for _, connection in ipairs(connections) do
-						connection:Disconnect();
-					end
-					connections = {};
-					FlatIdent_5AA23 = 1;
-				end
+			for _, connection in ipairs(connections) do
+				connection:Disconnect();
 			end
+			connections = {};
+			local character = player['Character'] or player['CharacterAdded']:Wait();
+			local humanoid = character:WaitForChild("Humanoid");
+			table.insert(connections, UserInputService['InputBegan']:Connect(function(input)
+				if (input['KeyCode'] ~= Enum['KeyCode']['C']) then
+				else
+					isSprinting = true;
+				end
+			end));
+			table.insert(connections, UserInputService['InputEnded']:Connect(function(input)
+				if ((input['KeyCode'] == Enum['KeyCode']['C']) or (2652 < 196)) then
+					isSprinting = false;
+				end
+			end));
+			table.insert(connections, RunService['RenderStepped']:Connect(updateMovement));
+			humanoid['Died']:Connect(function()
+				isSprinting = false;
+			end);
 		end
 		player['CharacterAdded']:Connect(function()
-			local FlatIdent_1D164 = 0;
-			while true do
-				if (0 == FlatIdent_1D164) then
-					wait(0.1);
-					startScript();
-					break;
-				end
-			end
+			wait(0.1);
+			startScript();
 		end);
 		startScript();
 	end);
 end
-coroutine.wrap(DNGPSQT_fake_script)();
-local function BWBQ_fake_script()
+coroutine.wrap(XLLDG_fake_script)();
+local function UJFS_fake_script()
 	local script = Instance.new("LocalScript", fly);
 	script['Parent']['MouseButton1Click']:Connect(function()
 		local plr = game['Players']['LocalPlayer'];
@@ -1413,29 +1467,28 @@ local function BWBQ_fake_script()
 			gyro['cframe'] = torso['CFrame'];
 			repeat
 				wait();
-				if (not torso or not torso['Parent'] or (1180 == 2180)) then
+				if ((4135 < 4817) and (not torso or not torso['Parent'])) then
 					flying = false;
 					break;
 				end
 				plr['Character']['Humanoid']['PlatformStand'] = true;
 				local newPos = (gyro['cframe'] - gyro['cframe']['p']) + pos['position'];
-				if (not keys['w'] and not keys['s'] and not keys['a'] and not keys['d']) then
+				if ((272 == 272) and not keys['w'] and not keys['s'] and not keys['a'] and not keys['d']) then
 					speed = 5;
 				end
-				if ((4090 < 4653) and keys['w']) then
+				if keys['w'] then
 					newPos = newPos + (workspace['CurrentCamera']['CFrame']['LookVector'] * speed);
 				end
-				if (keys['s'] or (2652 < 196)) then
+				if keys['s'] then
 					newPos = newPos - (workspace['CurrentCamera']['CFrame']['LookVector'] * speed);
 				end
-				if keys['d'] then
+				if ((100 <= 3123) and keys['d']) then
 					newPos = newPos * CFrame.new(speed, 0, 0);
 				end
-				if ((4135 < 4817) and keys['a']) then
+				if (keys['a'] or (1369 > 4987)) then
 					newPos = newPos * CFrame.new(-speed, 0, 0);
 				end
-				if (speed <= 10) then
-				else
+				if ((speed > 10) or (863 >= 4584)) then
 					speed = 5;
 				end
 				pos['position'] = newPos['p'];
@@ -1444,48 +1497,36 @@ local function BWBQ_fake_script()
 			if pos then
 				pos:Destroy();
 			end
-			if ((272 == 272) and gyro) then
+			if (gyro or (724 >= 1668)) then
 				gyro:Destroy();
 			end
 			plr['Character']['Humanoid']['PlatformStand'] = false;
 			speed = 10;
 		end
 		local function setupControls()
-			if ((100 <= 3123) and e1) then
+			if e1 then
 				e1:Disconnect();
 			end
-			if (e2 or (1369 > 4987)) then
+			if e2 then
 				e2:Disconnect();
 			end
 			e1 = mouse['KeyDown']:Connect(function(key)
-				local FlatIdent_654E4 = 0;
-				while true do
-					if (FlatIdent_654E4 == 0) then
-						if (not torso or not torso['Parent'] or (863 >= 4584)) then
-							flying = false;
-							return;
-						end
-						if ((key == "w") or (724 >= 1668)) then
-							keys['w'] = true;
-						elseif ((428 < 1804) and (key == "s")) then
-							keys['s'] = true;
-						elseif (key == "a") then
-							keys['a'] = true;
-						elseif ((key == "d") or (3325 > 4613)) then
-							keys['d'] = true;
-						elseif ((key == "x") or (4950 <= 4553)) then
-							local FlatIdent_40096 = 0;
-							while true do
-								if (FlatIdent_40096 == 0) then
-									flying = not flying;
-									if ((2665 <= 3933) and flying) then
-										startFly();
-									end
-									break;
-								end
-							end
-						end
-						break;
+				if ((428 < 1804) and (not torso or not torso['Parent'])) then
+					flying = false;
+					return;
+				end
+				if (key == "w") then
+					keys['w'] = true;
+				elseif ((key == "s") or (3325 > 4613)) then
+					keys['s'] = true;
+				elseif ((key == "a") or (4950 <= 4553)) then
+					keys['a'] = true;
+				elseif (key == "d") then
+					keys['d'] = true;
+				elseif ((2665 <= 3933) and (key == "x")) then
+					flying = not flying;
+					if flying then
+						startFly();
 					end
 				end
 			end);
@@ -1494,184 +1535,98 @@ local function BWBQ_fake_script()
 					keys['w'] = false;
 				elseif (key == "s") then
 					keys['s'] = false;
-				elseif ((3824 > 409) and (key == "a")) then
+				elseif (key == "a") then
 					keys['a'] = false;
-				elseif ((2087 == 2087) and (key == "d")) then
+				elseif ((3824 > 409) and (key == "d")) then
 					keys['d'] = false;
 				end
 			end);
 		end
 		local function createCore(character)
-			local FlatIdent_190B6 = 0;
-			local Core;
-			local weld;
-			while true do
-				if (FlatIdent_190B6 == 1) then
-					Core['Anchored'] = false;
-					Core['CanCollide'] = false;
-					Core['Parent'] = workspace;
-					weld = Instance.new("Weld", Core);
-					FlatIdent_190B6 = 2;
-				end
-				if (FlatIdent_190B6 == 2) then
-					weld['Part0'] = Core;
-					weld['Part1'] = character:WaitForChild("LowerTorso");
-					weld['C0'] = CFrame.new(0, 0, 0);
-					torso = Core;
-					FlatIdent_190B6 = 3;
-				end
-				if (FlatIdent_190B6 == 3) then
-					setupControls();
-					break;
-				end
-				if (0 == FlatIdent_190B6) then
-					if (workspace:FindFirstChild("Core") or (3404 > 4503)) then
-						workspace['Core']:Destroy();
-					end
-					Core = Instance.new("Part");
-					Core['Name'] = "Core";
-					Core['Size'] = Vector3.new(0.05, 0.05, 0.05);
-					FlatIdent_190B6 = 1;
-				end
+			if workspace:FindFirstChild("Core") then
+				workspace['Core']:Destroy();
 			end
+			local Core = Instance.new("Part");
+			Core['Name'] = "Core";
+			Core['Size'] = Vector3.new(0.05, 0.05, 0.05);
+			Core['Anchored'] = false;
+			Core['CanCollide'] = false;
+			Core['Parent'] = workspace;
+			local weld = Instance.new("Weld", Core);
+			weld['Part0'] = Core;
+			weld['Part1'] = character:WaitForChild("LowerTorso");
+			weld['C0'] = CFrame.new(0, 0, 0);
+			torso = Core;
+			setupControls();
 		end
 		plr['CharacterAdded']:Connect(function(character)
-			local FlatIdent_622B0 = 0;
-			while true do
-				if (FlatIdent_622B0 == 0) then
-					character:WaitForChild("Humanoid")['Died']:Connect(function()
-						flying = false;
-					end);
-					createCore(character);
-					break;
-				end
-			end
+			character:WaitForChild("Humanoid")['Died']:Connect(function()
+				flying = false;
+			end);
+			createCore(character);
 		end);
-		if (plr['Character'] or (3506 <= 1309)) then
+		if ((2087 == 2087) and plr['Character']) then
 			createCore(plr.Character);
 		end
 	end);
 end
-coroutine.wrap(BWBQ_fake_script)();
-local function OTKQM_fake_script()
-	local FlatIdent_6066D = 0;
-	local script;
-	while true do
-		if (FlatIdent_6066D == 0) then
-			script = Instance.new("LocalScript", DisableSeats);
-			script['Parent']['MouseButton1Click']:Connect(function()
-				local FlatIdent_43BF7 = 0;
-				local destroyAllSeats;
-				while true do
-					if (FlatIdent_43BF7 == 1) then
-						destroyAllSeats();
-						game['Workspace']['DescendantAdded']:Connect(function(descendant)
-							if ((2955 == 2955) and (descendant:IsA("Seat") or descendant:IsA("VehicleSeat"))) then
-								descendant:Destroy();
-							end
-						end);
-						break;
-					end
-					if (0 == FlatIdent_43BF7) then
-						destroyAllSeats = nil;
-						function destroyAllSeats()
-							for _, seat in ipairs(game['Workspace']:GetDescendants()) do
-								if (seat:IsA("Seat") or seat:IsA("VehicleSeat")) then
-									seat:Destroy();
-								end
-							end
-						end
-						FlatIdent_43BF7 = 1;
-					end
+coroutine.wrap(UJFS_fake_script)();
+local function SQNJHH_fake_script()
+	local script = Instance.new("LocalScript", DisableSeats);
+	script['Parent']['MouseButton1Click']:Connect(function()
+		local function destroyAllSeats()
+			for _, seat in ipairs(game['Workspace']:GetDescendants()) do
+				if (seat:IsA("Seat") or seat:IsA("VehicleSeat") or (3404 > 4503)) then
+					seat:Destroy();
 				end
-			end);
-			break;
+			end
 		end
-	end
+		destroyAllSeats();
+		game['Workspace']['DescendantAdded']:Connect(function(descendant)
+			if (descendant:IsA("Seat") or descendant:IsA("VehicleSeat") or (3506 <= 1309)) then
+				descendant:Destroy();
+			end
+		end);
+	end);
 end
-coroutine.wrap(OTKQM_fake_script)();
-local function QKMDEI_fake_script()
-	local FlatIdent_84B7E = 0;
-	local script;
-	while true do
-		if (FlatIdent_84B7E == 0) then
-			script = Instance.new("LocalScript", spin);
-			script['Parent']['MouseButton1Click']:Connect(function()
-				local FlatIdent_7AA3 = 0;
-				local player;
-				local character;
-				local humanoidRootPart;
-				local userInputService;
-				local runService;
-				local isTurning;
-				local onInputBegan;
-				local onInputEnded;
-				local onRenderStep;
-				while true do
-					if (1 == FlatIdent_7AA3) then
-						runService = game:GetService("RunService");
-						isTurning = false;
-						onInputBegan = nil;
-						function onInputBegan(input, gameProcessed)
-							local FlatIdent_3B561 = 0;
-							while true do
-								if (FlatIdent_3B561 == 0) then
-									if gameProcessed then
-										return;
-									end
-									if ((input['KeyCode'] == Enum['KeyCode']['G']) or (2903 == 1495)) then
-										isTurning = true;
-									end
-									break;
-								end
-							end
-						end
-						FlatIdent_7AA3 = 2;
-					end
-					if (FlatIdent_7AA3 == 0) then
-						player = game['Players']['LocalPlayer'];
-						character = player['Character'] or player['CharacterAdded']:Wait();
-						humanoidRootPart = character:WaitForChild("HumanoidRootPart");
-						userInputService = game:GetService("UserInputService");
-						FlatIdent_7AA3 = 1;
-					end
-					if (FlatIdent_7AA3 == 2) then
-						onInputEnded = nil;
-						function onInputEnded(input, gameProcessed)
-							if ((4546 >= 2275) and (input['KeyCode'] == Enum['KeyCode']['G'])) then
-								isTurning = false;
-							end
-						end
-						onRenderStep = nil;
-						function onRenderStep()
-							if ((819 >= 22) and isTurning) then
-								local FlatIdent_3831 = 0;
-								local newCFrame;
-								while true do
-									if (FlatIdent_3831 == 0) then
-										newCFrame = humanoidRootPart['CFrame'] * CFrame.Angles(0, math.rad(70), 0);
-										humanoidRootPart['CFrame'] = newCFrame;
-										break;
-									end
-								end
-							end
-						end
-						FlatIdent_7AA3 = 3;
-					end
-					if (FlatIdent_7AA3 == 3) then
-						userInputService['InputBegan']:Connect(onInputBegan);
-						userInputService['InputEnded']:Connect(onInputEnded);
-						runService['RenderStepped']:Connect(onRenderStep);
-						break;
-					end
-				end
-			end);
-			break;
+coroutine.wrap(SQNJHH_fake_script)();
+local function YDHPGK_fake_script()
+	local script = Instance.new("LocalScript", spin);
+	script['Parent']['MouseButton1Click']:Connect(function()
+		local player = game['Players']['LocalPlayer'];
+		local character = player['Character'] or player['CharacterAdded']:Wait();
+		local humanoidRootPart = character:WaitForChild("HumanoidRootPart");
+		local userInputService = game:GetService("UserInputService");
+		local runService = game:GetService("RunService");
+		local isTurning = false;
+		local function onInputBegan(input, gameProcessed)
+			if ((2955 == 2955) and gameProcessed) then
+				return;
+			end
+			if (input['KeyCode'] ~= Enum['KeyCode']['G']) then
+			else
+				isTurning = true;
+			end
 		end
-	end
+		local function onInputEnded(input, gameProcessed)
+			if (input['KeyCode'] ~= Enum['KeyCode']['G']) then
+			else
+				isTurning = false;
+			end
+		end
+		local function onRenderStep()
+			if isTurning then
+				local newCFrame = humanoidRootPart['CFrame'] * CFrame.Angles(0, math.rad(70), 0);
+				humanoidRootPart['CFrame'] = newCFrame;
+			end
+		end
+		userInputService['InputBegan']:Connect(onInputBegan);
+		userInputService['InputEnded']:Connect(onInputEnded);
+		runService['RenderStepped']:Connect(onRenderStep);
+	end);
 end
-coroutine.wrap(QKMDEI_fake_script)();
-local function KMJJSVM_fake_script()
+coroutine.wrap(YDHPGK_fake_script)();
+local function NXQBUDS_fake_script()
 	local script = Instance.new("LocalScript", animationpack);
 	script['Parent']['MouseButton1Click']:Connect(function()
 		repeat
@@ -1680,10 +1635,10 @@ local function KMJJSVM_fake_script()
 		if game['ReplicatedStorage']['ClientAnimations']:FindFirstChild("Lean") then
 			game['ReplicatedStorage']['ClientAnimations']['Lean']:Destroy();
 		end
-		if ((3162 == 3162) and game['ReplicatedStorage']['ClientAnimations']:FindFirstChild("Lay")) then
+		if (game['ReplicatedStorage']['ClientAnimations']:FindFirstChild("Lay") or (2903 == 1495)) then
 			game['ReplicatedStorage']['ClientAnimations']['Lay']:Destroy();
 		end
-		if (game['ReplicatedStorage']['ClientAnimations']:FindFirstChild("Dance1") or (2369 > 4429)) then
+		if game['ReplicatedStorage']['ClientAnimations']:FindFirstChild("Dance1") then
 			game['ReplicatedStorage']['ClientAnimations']['Dance1']:Destroy();
 		end
 		if game['ReplicatedStorage']['ClientAnimations']:FindFirstChild("Dance2") then
@@ -1692,10 +1647,10 @@ local function KMJJSVM_fake_script()
 		if game['ReplicatedStorage']['ClientAnimations']:FindFirstChild("Greet") then
 			game['ReplicatedStorage']['ClientAnimations']['Greet']:Destroy();
 		end
-		if ((4095 >= 3183) and game['ReplicatedStorage']['ClientAnimations']:FindFirstChild("Chest Pump")) then
+		if game['ReplicatedStorage']['ClientAnimations']:FindFirstChild("Chest Pump") then
 			game['ReplicatedStorage']['ClientAnimations']["Chest Pump"]:Destroy();
 		end
-		if game['ReplicatedStorage']['ClientAnimations']:FindFirstChild("Praying") then
+		if ((4546 >= 2275) and game['ReplicatedStorage']['ClientAnimations']:FindFirstChild("Praying")) then
 			game['ReplicatedStorage']['ClientAnimations']['Praying']:Destroy();
 		end
 		local Animations = game['ReplicatedStorage']['ClientAnimations'];
@@ -1738,78 +1693,62 @@ local function KMJJSVM_fake_script()
 			AnimationPack['Visible'] = true;
 			AnimationPack['ScrollingFrame']['UIListLayout']['SortOrder'] = Enum['SortOrder']['LayoutOrder'];
 			for i, v in pairs(ScrollingFrame:GetChildren()) do
-				if (v['Name'] == "TextButton") then
-					if (v['Text'] ~= "Lean") then
-					else
+				if ((819 >= 22) and (v['Name'] == "TextButton")) then
+					if ((3162 == 3162) and (v['Text'] == "Lean")) then
 						v['Name'] = "LeanButton";
 					end
 				end
 			end
 			for i, v in pairs(ScrollingFrame:GetChildren()) do
-				if (v['Name'] == "TextButton") then
-					if ((v['Text'] == "Lay") or (3711 < 1008)) then
+				if ((v['Name'] == "TextButton") or (2369 > 4429)) then
+					if (v['Text'] ~= "Lay") then
+					else
 						v['Name'] = "LayButton";
 					end
 				end
 			end
 			for i, v in pairs(ScrollingFrame:GetChildren()) do
 				if (v['Name'] == "TextButton") then
-					if (v['Text'] == "Dance1") then
+					if ((4095 >= 3183) and (v['Text'] == "Dance1")) then
 						v['Name'] = "Dance1Button";
 					end
 				end
 			end
 			for i, v in pairs(ScrollingFrame:GetChildren()) do
+				if (v['Name'] ~= "TextButton") then
+				elseif (v['Text'] ~= "Dance2") then
+				else
+					v['Name'] = "Dance2Button";
+				end
+			end
+			for i, v in pairs(ScrollingFrame:GetChildren()) do
+				if (v['Name'] ~= "TextButton") then
+				elseif (v['Text'] ~= "Greet") then
+				else
+					v['Name'] = "GreetButton";
+				end
+			end
+			for i, v in pairs(ScrollingFrame:GetChildren()) do
+				if (v['Name'] ~= "TextButton") then
+				elseif ((v['Text'] == "Chest Pump") or (3711 < 1008)) then
+					v['Name'] = "ChestPumpButton";
+				end
+			end
+			for i, v in pairs(ScrollingFrame:GetChildren()) do
 				if ((v['Name'] == "TextButton") or (1049 <= 906)) then
-					if ((4513 > 2726) and (v['Text'] == "Dance2")) then
-						v['Name'] = "Dance2Button";
-					end
-				end
-			end
-			for i, v in pairs(ScrollingFrame:GetChildren()) do
-				if (v['Name'] == "TextButton") then
-					if ((v['Text'] == "Greet") or (1481 >= 2658)) then
-						v['Name'] = "GreetButton";
-					end
-				end
-			end
-			for i, v in pairs(ScrollingFrame:GetChildren()) do
-				if (v['Name'] == "TextButton") then
-					if ((v['Text'] == "Chest Pump") or (3220 == 1364)) then
-						v['Name'] = "ChestPumpButton";
-					end
-				end
-			end
-			for i, v in pairs(ScrollingFrame:GetChildren()) do
-				if (v['Name'] == "TextButton") then
-					if ((v['Text'] == "Praying") or (1054 > 3392)) then
+					if ((4513 > 2726) and (v['Text'] == "Praying")) then
 						v['Name'] = "PrayingButton";
 					end
 				end
 			end
 			function Stop()
-				local FlatIdent_5D905 = 0;
-				while true do
-					if (2 == FlatIdent_5D905) then
-						Greet:Stop();
-						ChestPump:Stop();
-						FlatIdent_5D905 = 3;
-					end
-					if (FlatIdent_5D905 == 1) then
-						Dance1:Stop();
-						Dance2:Stop();
-						FlatIdent_5D905 = 2;
-					end
-					if (FlatIdent_5D905 == 0) then
-						Lean:Stop();
-						Lay:Stop();
-						FlatIdent_5D905 = 1;
-					end
-					if (FlatIdent_5D905 == 3) then
-						Praying:Stop();
-						break;
-					end
-				end
+				Lean:Stop();
+				Lay:Stop();
+				Dance1:Stop();
+				Dance2:Stop();
+				Greet:Stop();
+				ChestPump:Stop();
+				Praying:Stop();
 			end
 			local LeanTextButton = ScrollingFrame['LeanButton'];
 			local LayTextButton = ScrollingFrame['LayButton'];
@@ -1819,64 +1758,32 @@ local function KMJJSVM_fake_script()
 			local ChestPumpTextButton = ScrollingFrame['ChestPumpButton'];
 			local PrayingTextButton = ScrollingFrame['PrayingButton'];
 			AnimationPack['MouseButton1Click']:Connect(function()
-				if (ScrollingFrame['Visible'] ~= false) then
-				else
-					local FlatIdent_57FF4 = 0;
-					while true do
-						if (FlatIdent_57FF4 == 0) then
-							ScrollingFrame['Visible'] = true;
-							CloseButton['Visible'] = true;
-							break;
-						end
-					end
+				if (ScrollingFrame['Visible'] == false) then
+					ScrollingFrame['Visible'] = true;
+					CloseButton['Visible'] = true;
 				end
 			end);
 			CloseButton['MouseButton1Click']:Connect(function()
-				if (ScrollingFrame['Visible'] ~= true) then
-				else
+				if (ScrollingFrame['Visible'] == true) then
 					ScrollingFrame['Visible'] = false;
 					CloseButton['Visible'] = false;
 				end
 			end);
 			LeanTextButton['MouseButton1Click']:Connect(function()
-				local FlatIdent_21E03 = 0;
-				while true do
-					if (FlatIdent_21E03 == 0) then
-						Stop();
-						Lean:Play();
-						break;
-					end
-				end
+				Stop();
+				Lean:Play();
 			end);
 			LayTextButton['MouseButton1Click']:Connect(function()
-				local FlatIdent_1F620 = 0;
-				while true do
-					if (FlatIdent_1F620 == 0) then
-						Stop();
-						Lay:Play();
-						break;
-					end
-				end
+				Stop();
+				Lay:Play();
 			end);
 			Dance1TextButton['MouseButton1Click']:Connect(function()
-				local FlatIdent_8BE54 = 0;
-				while true do
-					if (FlatIdent_8BE54 == 0) then
-						Stop();
-						Dance1:Play();
-						break;
-					end
-				end
+				Stop();
+				Dance1:Play();
 			end);
 			Dance2TextButton['MouseButton1Click']:Connect(function()
-				local FlatIdent_6F99F = 0;
-				while true do
-					if (FlatIdent_6F99F == 0) then
-						Stop();
-						Dance2:Play();
-						break;
-					end
-				end
+				Stop();
+				Dance2:Play();
 			end);
 			GreetTextButton['MouseButton1Click']:Connect(function()
 				Stop();
@@ -1887,14 +1794,8 @@ local function KMJJSVM_fake_script()
 				ChestPump:Play();
 			end);
 			PrayingTextButton['MouseButton1Click']:Connect(function()
-				local FlatIdent_15034 = 0;
-				while true do
-					if (FlatIdent_15034 == 0) then
-						Stop();
-						Praying:Play();
-						break;
-					end
-				end
+				Stop();
+				Praying:Play();
 			end);
 			game:GetService("Players")['LocalPlayer']['Character']['Humanoid']['Running']:Connect(function()
 				Stop();
@@ -1907,35 +1808,23 @@ local function KMJJSVM_fake_script()
 		game['Players']['LocalPlayer']['CharacterAdded']:Connect(AnimationPack);
 	end);
 end
-coroutine.wrap(KMJJSVM_fake_script)();
-local function UEZISCP_fake_script()
+coroutine.wrap(NXQBUDS_fake_script)();
+local function FJWWXNK_fake_script()
 	local script = Instance.new("LocalScript", playername);
 	local name = game:GetService("Players")['LocalPlayer']['Name'];
 	local dname = game:GetService("Players")['LocalPlayer']['DisplayName'];
 	local label = script['Parent'];
 	label['Text'] = "Welcome to Kroton, " .. dname .. " (@" .. name .. ")." .. " Have fun exploiting!";
 end
-coroutine.wrap(UEZISCP_fake_script)();
-local function SLKIKRJ_fake_script()
-	local FlatIdent_23FF9 = 0;
-	local script;
-	local id;
-	local label;
-	while true do
-		if (FlatIdent_23FF9 == 0) then
-			script = Instance.new("LocalScript", playerid);
-			id = game:GetService("Players")['LocalPlayer']['UserId'];
-			FlatIdent_23FF9 = 1;
-		end
-		if (FlatIdent_23FF9 == 1) then
-			label = script['Parent'];
-			label['Text'] = "Your PlayerID: " .. id;
-			break;
-		end
-	end
+coroutine.wrap(FJWWXNK_fake_script)();
+local function QPAT_fake_script()
+	local script = Instance.new("LocalScript", playerid);
+	local id = game:GetService("Players")['LocalPlayer']['UserId'];
+	local label = script['Parent'];
+	label['Text'] = "Your PlayerID: " .. id;
 end
-coroutine.wrap(SLKIKRJ_fake_script)();
-local function OAMW_fake_script()
+coroutine.wrap(QPAT_fake_script)();
+local function TJYT_fake_script()
 	local script = Instance.new("LocalScript", gt);
 	while wait() do
 		local totalTime = game:GetService("Workspace")['DistributedGameTime'];
@@ -1945,73 +1834,35 @@ local function OAMW_fake_script()
 		script['Parent']['Text'] = string.format("Game Time: %dh %dmin %dsec", hours, minutes, seconds);
 	end
 end
-coroutine.wrap(OAMW_fake_script)();
-local function YWBYZB_fake_script()
-	local FlatIdent_694C5 = 0;
-	local script;
-	local Players;
-	local player;
-	local userId;
-	local thumbType;
-	local thumbSize;
-	local content;
-	local isReady;
-	local imageLabel;
-	while true do
-		if (FlatIdent_694C5 == 4) then
-			imageLabel['Image'] = content;
-			imageLabel['Size'] = UDim2.new(0, 100, 0, 100);
-			break;
-		end
-		if (FlatIdent_694C5 == 2) then
-			thumbType = Enum['ThumbnailType']['HeadShot'];
-			thumbSize = Enum['ThumbnailSize']['Size420x420'];
-			FlatIdent_694C5 = 3;
-		end
-		if (FlatIdent_694C5 == 3) then
-			content, isReady = Players:GetUserThumbnailAsync(userId, thumbType, thumbSize);
-			imageLabel = script['Parent'];
-			FlatIdent_694C5 = 4;
-		end
-		if (FlatIdent_694C5 == 1) then
-			player = Players['LocalPlayer'];
-			userId = player['UserId'];
-			FlatIdent_694C5 = 2;
-		end
-		if (FlatIdent_694C5 == 0) then
-			script = Instance.new("LocalScript", playerheadshot);
-			Players = game:GetService("Players");
-			FlatIdent_694C5 = 1;
-		end
-	end
+coroutine.wrap(TJYT_fake_script)();
+local function LTBABK_fake_script()
+	local script = Instance.new("LocalScript", playerheadshot);
+	local Players = game:GetService("Players");
+	local player = Players['LocalPlayer'];
+	local userId = player['UserId'];
+	local thumbType = Enum['ThumbnailType']['HeadShot'];
+	local thumbSize = Enum['ThumbnailSize']['Size420x420'];
+	local content, isReady = Players:GetUserThumbnailAsync(userId, thumbType, thumbSize);
+	local imageLabel = script['Parent'];
+	imageLabel['Image'] = content;
+	imageLabel['Size'] = UDim2.new(0, 100, 0, 100);
 end
-coroutine.wrap(YWBYZB_fake_script)();
-local function YFNMOJM_fake_script()
+coroutine.wrap(LTBABK_fake_script)();
+local function LOIBL_fake_script()
 	local script = Instance.new("LocalScript", accage);
 	local id = game:GetService("Players")['LocalPlayer']['AccountAge'];
 	local label = script['Parent'];
 	label['Text'] = "Account Age: " .. id .. " days";
 end
-coroutine.wrap(YFNMOJM_fake_script)();
-local function ZUPMT_fake_script()
-	local FlatIdent_810B1 = 0;
-	local script;
-	local player;
-	while true do
-		if (FlatIdent_810B1 == 0) then
-			script = Instance.new("LocalScript", main);
-			player = game['Players']['LocalPlayer']['Name'];
-			FlatIdent_810B1 = 1;
-		end
-		if (FlatIdent_810B1 == 1) then
-			wait(4);
-			game['StarterGui']:SetCore("SendNotification", {Title="Welcome to Kroton!",Text=("Hey " .. player .. " have fun exploiting! Rewritten by cryptic (aka Axtra) - DISCORD: crypticww"),Icon="",Duration=nil,Button1="sigma",Button2=nil,Callback=nil});
-			break;
-		end
-	end
+coroutine.wrap(LOIBL_fake_script)();
+local function LDQNB_fake_script()
+	local script = Instance.new("LocalScript", main);
+	local player = game['Players']['LocalPlayer']['Name'];
+	wait(4);
+	game['StarterGui']:SetCore("SendNotification", {Title="Welcome to Kroton!",Text=("Hey " .. player .. " have fun exploiting! Rewritten by cryptic (aka Axtra) - DISCORD: crypticww"),Icon="",Duration=nil,Button1="sigma",Button2=nil,Callback=nil});
 end
-coroutine.wrap(ZUPMT_fake_script)();
-local function BVWR_fake_script()
+coroutine.wrap(LDQNB_fake_script)();
+local function TJWK_fake_script()
 	local script = Instance.new("LocalScript", camaim);
 	script['Parent']['MouseButton1Click']:Connect(function()
 		getgenv()['prediction'] = 0.102;
@@ -2030,33 +1881,15 @@ local function BVWR_fake_script()
 			local target = nil;
 			local shortdistance = math['huge'];
 			for _, v in next, workspace:GetDescendants() do
-				if (v['Parent'] and v:IsA("Model") and (v ~= localplayer['Character'])) then
-					if v:FindFirstChildOfClass("Humanoid") then
-						if ((v:FindFirstChildOfClass("Humanoid")['Health'] > 0) or (676 >= 1642)) then
+				if ((v['Parent'] and v:IsA("Model") and (v ~= localplayer['Character'])) or (1481 >= 2658)) then
+					if (v:FindFirstChildOfClass("Humanoid") or (3220 == 1364)) then
+						if ((v:FindFirstChildOfClass("Humanoid")['Health'] > 0) or (1054 > 3392)) then
 							pcall(function()
-								local FlatIdent_1CFC3 = 0;
-								local worldtoviewportpoint;
-								local onscreen;
-								local distance;
-								while true do
-									if (FlatIdent_1CFC3 == 0) then
-										worldtoviewportpoint, onscreen = currentCamera:WorldToViewportPoint(v:FindFirstChildOfClass("Humanoid")['RootPart']['Position'] or v['PrimaryPart']['Position']);
-										distance = (Vector2.new(mouse.X, mouse.Y) - Vector2.new(worldtoviewportpoint.X, worldtoviewportpoint.Y))['Magnitude'];
-										FlatIdent_1CFC3 = 1;
-									end
-									if (FlatIdent_1CFC3 == 1) then
-										if ((4136 > 2397) and (math['huge'] > distance) and (distance < shortdistance) and onscreen) then
-											local FlatIdent_431E0 = 0;
-											while true do
-												if (FlatIdent_431E0 == 0) then
-													target = v;
-													shortdistance = distance;
-													break;
-												end
-											end
-										end
-										break;
-									end
+								local worldtoviewportpoint, onscreen = currentCamera:WorldToViewportPoint(v:FindFirstChildOfClass("Humanoid")['RootPart']['Position'] or v['PrimaryPart']['Position']);
+								local distance = (Vector2.new(mouse.X, mouse.Y) - Vector2.new(worldtoviewportpoint.X, worldtoviewportpoint.Y))['Magnitude'];
+								if ((math['huge'] > distance) and (distance < shortdistance) and onscreen) then
+									target = v;
+									shortdistance = distance;
 								end
 							end);
 						end
@@ -2066,34 +1899,22 @@ local function BVWR_fake_script()
 			return target and (target['PrimaryPart'] or target:FindFirstChildOfClass("Humanoid")['RootPart']);
 		end
 		userinputservice['InputBegan']:Connect(function(input, processed)
-			local FlatIdent_35C62 = 0;
-			while true do
-				if (FlatIdent_35C62 == 0) then
-					if (processed or (4334 == 4245)) then
-						return;
-					end
-					if ((input['KeyCode'] == Enum['KeyCode']['Q']) or (4276 <= 3031)) then
-						local FlatIdent_4FB53 = 0;
-						while true do
-							if (FlatIdent_4FB53 == 0) then
-								targeting = not targeting;
-								if (targeting or (4782 <= 1199)) then
-									victim = target();
-								elseif ((victim ~= nil) or (4864 < 1902)) then
-									victim = nil;
-								end
-								break;
-							end
-						end
-					end
-					break;
+			if (processed or (676 >= 1642)) then
+				return;
+			end
+			if ((4136 > 2397) and (input['KeyCode'] == Enum['KeyCode']['Q'])) then
+				targeting = not targeting;
+				if targeting then
+					victim = target();
+				elseif ((victim ~= nil) or (4334 == 4245)) then
+					victim = nil;
 				end
 			end
 		end);
 		local velocity = Vector3.new(0, 0, 0);
 		local oldpos = Vector3.new(0, 0, 0);
 		runservice['Heartbeat']:Connect(function(deltaTime)
-			if ((4839 >= 3700) and victim and victim['Parent']) then
+			if ((victim and victim['Parent']) or (4276 <= 3031)) then
 				local currentpos = victim['Position'];
 				local displacement = currentpos - oldpos;
 				local vector = displacement / deltaTime;
@@ -2102,209 +1923,112 @@ local function BVWR_fake_script()
 			end
 		end);
 		runservice['RenderStepped']:Connect(function()
-			local FlatIdent_499B1 = 0;
 			local pos;
-			while true do
-				if (FlatIdent_499B1 == 0) then
-					pos = nil;
-					if (targeting and victim and victim['Parent']) then
-						if (victim['Parent']:FindFirstChildOfClass("Humanoid") or (1075 > 1918)) then
-							if (victim['Parent']:FindFirstChildOfClass("Humanoid")['Health'] <= 0) then
+			if ((targeting and victim and victim['Parent']) or (4782 <= 1199)) then
+				if (victim['Parent']:FindFirstChildOfClass("Humanoid") or (4864 < 1902)) then
+					if (victim['Parent']:FindFirstChildOfClass("Humanoid")['Health'] > 0) then
+						if getgenv()['usePrediction'] then
+							if ((4839 >= 3700) and getgenv()['resolver']) then
+								pos = Vector3.new(victim['Position'].X, victim['Position'].Y, victim['Position'].Z) + (velocity * getgenv()['prediction']);
 							else
-								local FlatIdent_79729 = 0;
-								while true do
-									if (0 == FlatIdent_79729) then
-										if ((396 <= 3804) and getgenv()['usePrediction']) then
-											if getgenv()['resolver'] then
-												pos = Vector3.new(victim['Position'].X, victim['Position'].Y, victim['Position'].Z) + (velocity * getgenv()['prediction']);
-											else
-												pos = Vector3.new(victim['Position'].X, victim['Position'].Y, victim['Position'].Z) + (victim['velocity'] * getgenv()['prediction']);
-											end
-										else
-											pos = Vector3.new(victim['Position'].X, victim['Position'].Y, victim['Position'].Z);
-										end
-										currentCamera['CFrame'] = currentCamera['CFrame']:Lerp(CFrame.new(currentCamera['CFrame'].Position, pos), getgenv().smoothness);
-										break;
-									end
-								end
+								pos = Vector3.new(victim['Position'].X, victim['Position'].Y, victim['Position'].Z) + (victim['velocity'] * getgenv()['prediction']);
 							end
+						else
+							pos = Vector3.new(victim['Position'].X, victim['Position'].Y, victim['Position'].Z);
 						end
+						currentCamera['CFrame'] = currentCamera['CFrame']:Lerp(CFrame.new(currentCamera['CFrame'].Position, pos), getgenv().smoothness);
 					end
-					break;
 				end
 			end
 		end);
 	end);
 end
-coroutine.wrap(BVWR_fake_script)();
-local function QFAB_fake_script()
-	local FlatIdent_91CC3 = 0;
-	local script;
-	local activated;
-	while true do
-		if (FlatIdent_91CC3 == 0) then
-			script = Instance.new("LocalScript", NoSlowdown);
+coroutine.wrap(TJWK_fake_script)();
+local function IIZGAH_fake_script()
+	local script = Instance.new("LocalScript", NoSlowdown);
+	local activated = false;
+	script['Parent']['MouseButton1Click']:Connect(function()
+		if (activated or (1075 > 1918)) then
 			activated = false;
-			FlatIdent_91CC3 = 1;
+			script['Parent']['TextColor3'] = Color3.new(1, 0.286275, 0.298039);
+		else
+			activated = true;
+			script['Parent']['TextColor3'] = Color3.new(0.352941, 1, 0.396078);
 		end
-		if (1 == FlatIdent_91CC3) then
-			script['Parent']['MouseButton1Click']:Connect(function()
-				if activated then
-					local FlatIdent_FBDE = 0;
-					while true do
-						if (FlatIdent_FBDE == 0) then
-							activated = false;
-							script['Parent']['TextColor3'] = Color3.new(1, 0.286275, 0.298039);
-							break;
-						end
-					end
-				else
-					local FlatIdent_928A1 = 0;
-					while true do
-						if (FlatIdent_928A1 == 0) then
-							activated = true;
-							script['Parent']['TextColor3'] = Color3.new(0.352941, 1, 0.396078);
-							break;
-						end
-					end
-				end
-			end);
-			game:GetService("RunService")['RenderStepped']:Connect(function()
-				if ((activated == true) or (4169 == 2187)) then
-					local _char = game['Players']['LocalPlayer']['Character'];
-					wait(0.1);
-					if ((1406 == 1406) and (_char['Humanoid']['WalkSpeed'] <= 16)) then
-						_char['Humanoid']['WalkSpeed'] = 16;
-						print("no slowdown worked fine");
-					end
-				end
-			end);
-			break;
+	end);
+	game:GetService("RunService")['RenderStepped']:Connect(function()
+		if (activated ~= true) then
+		else
+			local _char = game['Players']['LocalPlayer']['Character'];
+			wait(0.1);
+			if (_char['Humanoid']['WalkSpeed'] > 16) then
+			else
+				_char['Humanoid']['WalkSpeed'] = 16;
+			end
 		end
-	end
+	end);
 end
-coroutine.wrap(QFAB_fake_script)();
-local function VNPR_fake_script()
-	local FlatIdent_7993F = 0;
-	local script;
-	local mainevent;
-	local isactive;
-	while true do
-		if (FlatIdent_7993F == 1) then
+coroutine.wrap(IIZGAH_fake_script)();
+local function WGOODFG_fake_script()
+	local script = Instance.new("LocalScript", autostomp);
+	local mainevent = game:GetService("ReplicatedStorage")['MainEvent'];
+	local isactive = false;
+	script['Parent']['MouseButton1Click']:Connect(function()
+		if ((396 <= 3804) and isactive) then
 			isactive = false;
-			script['Parent']['MouseButton1Click']:Connect(function()
-				local FlatIdent_9525B = 0;
-				while true do
-					if (FlatIdent_9525B == 0) then
-						if ((1531 < 4271) and isactive) then
-							local FlatIdent_91A09 = 0;
-							while true do
-								if (FlatIdent_91A09 == 0) then
-									isactive = false;
-									script['Parent']['TextColor3'] = Color3.new(1, 0.145098, 0.160784);
-									break;
-								end
-							end
-						else
-							local FlatIdent_4FF01 = 0;
-							while true do
-								if (FlatIdent_4FF01 == 0) then
-									isactive = true;
-									script['Parent']['TextColor3'] = Color3.new(0.352941, 1, 0.396078);
-									break;
-								end
-							end
-						end
-						while wait() do
-							if isactive then
-								mainevent:FireServer("Stomp");
-							end
-						end
-						break;
-					end
-				end
-			end);
-			break;
+			script['Parent']['TextColor3'] = Color3.new(1, 0.145098, 0.160784);
+		else
+			isactive = true;
+			script['Parent']['TextColor3'] = Color3.new(0.352941, 1, 0.396078);
 		end
-		if (FlatIdent_7993F == 0) then
-			script = Instance.new("LocalScript", autostomp);
-			mainevent = game:GetService("ReplicatedStorage")['MainEvent'];
-			FlatIdent_7993F = 1;
+		while wait() do
+			if isactive then
+				mainevent:FireServer("Stomp");
+			end
 		end
-	end
+	end);
 end
-coroutine.wrap(VNPR_fake_script)();
-local function AZLVGV_fake_script()
-	local FlatIdent_77CC3 = 0;
-	local script;
-	while true do
-		if (FlatIdent_77CC3 == 0) then
-			script = Instance.new("LocalScript", AntiLag);
-			script['Parent']['MouseButton1Click']:Connect(function()
-				local lightning = game:GetService("Lighting");
-				lightning['GlobalShadows'] = false;
-				for i, v in pairs(workspace:GetDescendants()) do
-					if ((635 == 635) and v:IsA("BasePart")) then
-						v['Material'] = Enum['Material']['Plastic'];
-					end
-				end
-				local Model = workspace;
-				local ClassTypes = {"Decal","Texture"};
-				for _, v in ipairs(workspace:GetDescendants()) do
-					if table.find(ClassTypes, v.ClassName) then
-						print(v.ClassName);
-						v:Destroy();
-					end
-				end
-			end);
-			break;
+coroutine.wrap(WGOODFG_fake_script)();
+local function KDDY_fake_script()
+	local script = Instance.new("LocalScript", AntiLag);
+	script['Parent']['MouseButton1Click']:Connect(function()
+		local lightning = game:GetService("Lighting");
+		lightning['GlobalShadows'] = false;
+		for i, v in pairs(workspace:GetDescendants()) do
+			if (v:IsA("BasePart") or (4169 == 2187)) then
+				v['Material'] = Enum['Material']['Plastic'];
+			end
 		end
-	end
+		local Model = workspace;
+		local ClassTypes = {"Decal","Texture"};
+		for _, v in ipairs(workspace:GetDescendants()) do
+			if ((1406 == 1406) and table.find(ClassTypes, v.ClassName)) then
+				print(v.ClassName);
+				v:Destroy();
+			end
+		end
+	end);
 end
-coroutine.wrap(AZLVGV_fake_script)();
-local function ERQYEXG_fake_script()
-	local FlatIdent_3416F = 0;
-	local script;
-	local lightning;
-	local btn;
-	while true do
-		if (FlatIdent_3416F == 1) then
-			btn = script['Parent'];
-			btn['MouseButton1Click']:Connect(function()
-				lightning['FogEnd'] = math['huge'];
-			end);
-			break;
-		end
-		if (FlatIdent_3416F == 0) then
-			script = Instance.new("LocalScript", NoFog);
-			lightning = game:GetService("Lighting");
-			FlatIdent_3416F = 1;
-		end
-	end
+coroutine.wrap(KDDY_fake_script)();
+local function VMXDLH_fake_script()
+	local script = Instance.new("LocalScript", NoFog);
+	local lightning = game:GetService("Lighting");
+	local btn = script['Parent'];
+	btn['MouseButton1Click']:Connect(function()
+		lightning['FogEnd'] = math['huge'];
+	end);
 end
-coroutine.wrap(ERQYEXG_fake_script)();
-local function GAYQLM_fake_script()
-	local FlatIdent_87C42 = 0;
-	local script;
-	local localplr;
-	local btn;
-	while true do
-		if (FlatIdent_87C42 == 1) then
-			btn = script['Parent'];
-			btn['MouseButton1Click']:Connect(function()
-				localplr['CameraMaxZoomDistance'] = math['huge'];
-			end);
-			break;
-		end
-		if (0 == FlatIdent_87C42) then
-			script = Instance.new("LocalScript", infzoom);
-			localplr = game:GetService("Players")['LocalPlayer'];
-			FlatIdent_87C42 = 1;
-		end
-	end
+coroutine.wrap(VMXDLH_fake_script)();
+local function UUVRD_fake_script()
+	local script = Instance.new("LocalScript", infzoom);
+	local localplr = game:GetService("Players")['LocalPlayer'];
+	local btn = script['Parent'];
+	btn['MouseButton1Click']:Connect(function()
+		localplr['CameraMaxZoomDistance'] = math['huge'];
+	end);
 end
-coroutine.wrap(GAYQLM_fake_script)();
-local function FKEMM_fake_script()
+coroutine.wrap(UUVRD_fake_script)();
+local function ZOCU_fake_script()
 	local script = Instance.new("LocalScript", DeleteProps);
 	local wk = game['Workspace'];
 	local a = wk:FindFirstChild("MAP"):FindFirstChild("Map"):FindFirstChild("Props");
@@ -2315,8 +2039,8 @@ local function FKEMM_fake_script()
 		end
 	end);
 end
-coroutine.wrap(FKEMM_fake_script)();
-local function ZSLRNZC_fake_script()
+coroutine.wrap(ZOCU_fake_script)();
+local function KHWT_fake_script()
 	local script = Instance.new("LocalScript", DeleteLights);
 	local wk = game['Workspace'];
 	local a = wk:FindFirstChild("Lights");
@@ -2325,645 +2049,679 @@ local function ZSLRNZC_fake_script()
 		a:Destroy();
 	end);
 end
-coroutine.wrap(ZSLRNZC_fake_script)();
-local function RERSHMC_fake_script()
-	local FlatIdent_97B67 = 0;
-	local script;
-	local btn;
-	while true do
-		if (FlatIdent_97B67 == 1) then
-			btn['MouseButton1Click']:Connect(function()
-				local FlatIdent_5B76B = 0;
-				local esp_settings;
-				local gui;
-				local esp;
-				while true do
-					if (FlatIdent_5B76B == 1) then
-						gui['ResetOnSpawn'] = false;
-						gui['AlwaysOnTop'] = true;
-						gui['LightInfluence'] = 0;
-						gui['Size'] = UDim2.new(1.75, 0, 1.75, 0);
-						FlatIdent_5B76B = 2;
-					end
-					if (FlatIdent_5B76B == 4) then
-						esp['TextColor3'] = Color3.new(1, 1, 1);
-						game:GetService("RunService")['RenderStepped']:Connect(function()
-							task.wait(0.2);
-							for i, v in pairs(game:GetService("Players"):GetPlayers()) do
-								if ((v ~= game:GetService("Players")['LocalPlayer']) and (v['Character']['Head']:FindFirstChild("nameesp") == nil)) then
-									esp['Text'] = "[" .. v['Name'] .. "]";
-									gui:Clone()['Parent'] = v['Character']['Head'];
-								end
-							end
-						end);
-						break;
-					end
-					if (FlatIdent_5B76B == 3) then
-						esp['BorderColor3'] = Color3.new(esp_settings.colour);
-						esp['BorderSizePixel'] = 0;
-						esp['Font'] = Enum['Font']['RobotoMono'];
-						esp['TextSize'] = esp_settings['textsize'];
-						FlatIdent_5B76B = 4;
-					end
-					if (FlatIdent_5B76B == 2) then
-						esp['BackgroundColor3'] = Color3.fromRGB(255, 255, 255);
-						esp['Text'] = "";
-						esp['Size'] = UDim2.new(0.0001, 0.00001, 0.0001, 0.00001);
-						esp['BorderSizePixel'] = 4;
-						FlatIdent_5B76B = 3;
-					end
-					if (0 == FlatIdent_5B76B) then
-						esp_settings = {textsize=15};
-						gui = Instance.new("BillboardGui");
-						esp = Instance.new("TextLabel", gui);
-						gui['Name'] = "nameesp";
-						FlatIdent_5B76B = 1;
-					end
+coroutine.wrap(KHWT_fake_script)();
+local function JATGR_fake_script()
+	local script = Instance.new("LocalScript", espname);
+	local button = script['Parent'];
+	local isNameDisplayEnabled = false;
+	local function showName(player)
+		if ((1531 < 4271) and player['Character'] and player['Character']:FindFirstChild("Humanoid") and (player ~= game['Players']['LocalPlayer'])) then
+			local head = player['Character']:FindFirstChild("Head");
+			if ((635 == 635) and head) then
+				if not player['Character']:FindFirstChild("PlayerNameTag") then
+					local billboardGui = Instance.new("BillboardGui");
+					billboardGui['Name'] = "PlayerNameTag";
+					billboardGui['Adornee'] = head;
+					billboardGui['Size'] = UDim2.new(0, 110, 0, 25);
+					billboardGui['StudsOffset'] = Vector3.new(0, 2, 0);
+					billboardGui['AlwaysOnTop'] = true;
+					local textLabel = Instance.new("TextLabel");
+					textLabel['Size'] = UDim2.new(1, 0, 1, 0);
+					textLabel['BackgroundTransparency'] = 1;
+					textLabel['Text'] = "[ " .. player['Name'] .. " ]";
+					textLabel['TextColor3'] = Color3.new(1, 1, 1);
+					textLabel['TextScaled'] = true;
+					textLabel['Font'] = Enum['Font']['SourceSansBold'];
+					textLabel['Parent'] = billboardGui;
+					billboardGui['Parent'] = player['Character'];
 				end
-			end);
-			break;
-		end
-		if (FlatIdent_97B67 == 0) then
-			script = Instance.new("LocalScript", espname);
-			btn = script['Parent'];
-			FlatIdent_97B67 = 1;
+			end
 		end
 	end
+	local function hideName(player)
+		if (player['Character'] and player['Character']:FindFirstChild("PlayerNameTag")) then
+			player['Character']['PlayerNameTag']:Destroy();
+		end
+	end
+	local function toggleNameDisplay()
+		isNameDisplayEnabled = not isNameDisplayEnabled;
+		button['TextColor3'] = (isNameDisplayEnabled and Color3.new(0.352941, 1, 0.396078)) or Color3.new(1, 0.286275, 0.294118);
+		for _, player in pairs(game['Players']:GetPlayers()) do
+			if isNameDisplayEnabled then
+				showName(player);
+			else
+				hideName(player);
+			end
+		end
+	end
+	local function onPlayerAdded(player)
+		player['CharacterAdded']:Connect(function(character)
+			wait(1);
+			if ((3373 <= 3556) and isNameDisplayEnabled) then
+				local head = character:WaitForChild("Head", 5);
+				if (head or (3291 < 3280)) then
+					showName(player);
+				end
+			end
+		end);
+		player['AncestryChanged']:Connect(function()
+			if not player:IsDescendantOf(game) then
+				hideName(player);
+			end
+		end);
+	end
+	for _, player in pairs(game['Players']:GetPlayers()) do
+		onPlayerAdded(player);
+	end
+	game['Players']['PlayerAdded']:Connect(onPlayerAdded);
+	button['MouseButton1Click']:Connect(toggleNameDisplay);
+	button['TextColor3'] = Color3.new(1, 0.286275, 0.294118);
 end
-coroutine.wrap(RERSHMC_fake_script)();
-local function FADJFTM_fake_script()
-	local FlatIdent_280F1 = 0;
-	local script;
-	local btn;
-	while true do
-		if (FlatIdent_280F1 == 1) then
-			btn['MouseButton1Click']:Connect(function()
-				local Settings = {Box_Color=Color3.fromRGB(255, 0, 0),Tracer_Color=Color3.fromRGB(255, 0, 0),Tracer_Thickness=1,Box_Thickness=1,Tracer_Origin="Bottom",Tracer_FollowMouse=false,Tracers=true};
-				local Team_Check = {TeamCheck=false,Green=Color3.fromRGB(0, 255, 0),Red=Color3.fromRGB(255, 0, 0)};
-				local TeamColor = true;
-				local player = game:GetService("Players")['LocalPlayer'];
-				local camera = game:GetService("Workspace")['CurrentCamera'];
-				local mouse = player:GetMouse();
-				local function NewQuad(thickness, color)
-					local FlatIdent_5B658 = 0;
-					local quad;
-					while true do
-						if (0 == FlatIdent_5B658) then
-							quad = Drawing.new("Quad");
-							quad['Visible'] = false;
-							quad['PointA'] = Vector2.new(0, 0);
-							FlatIdent_5B658 = 1;
-						end
-						if (FlatIdent_5B658 == 2) then
-							quad['Color'] = color;
-							quad['Filled'] = false;
-							quad['Thickness'] = thickness;
-							FlatIdent_5B658 = 3;
-						end
-						if (FlatIdent_5B658 == 3) then
-							quad['Transparency'] = 1;
-							return quad;
-						end
-						if (FlatIdent_5B658 == 1) then
-							quad['PointB'] = Vector2.new(0, 0);
-							quad['PointC'] = Vector2.new(0, 0);
-							quad['PointD'] = Vector2.new(0, 0);
-							FlatIdent_5B658 = 2;
-						end
+coroutine.wrap(JATGR_fake_script)();
+local function CYKV_fake_script()
+	local script = Instance.new("LocalScript", esptracer);
+	local Players = game:GetService("Players");
+	local LocalPlayer = Players['LocalPlayer'];
+	local Camera = workspace['CurrentCamera'];
+	local Tracers = {};
+	local ESPEnabled = false;
+	local function createTracer(player)
+		if (player ~= LocalPlayer) then
+			local tracer = Drawing.new("Line");
+			tracer['Color'] = Color3.new(1, 1, 1);
+			tracer['Thickness'] = 1;
+			tracer['Transparency'] = 1;
+			Tracers[player] = tracer;
+		end
+	end
+	local function removeTracer(player)
+		if ((4386 >= 873) and Tracers[player]) then
+			Tracers[player]:Remove();
+			Tracers[player] = nil;
+		end
+	end
+	local function updateTracers()
+		for player, tracer in pairs(Tracers) do
+			local character = player['Character'];
+			if (character and character:FindFirstChild("HumanoidRootPart")) then
+				local humanoidRootPart = character['HumanoidRootPart'];
+				local screenPosition, onScreen = Camera:WorldToViewportPoint(humanoidRootPart.Position);
+				if ((921 <= 1102) and onScreen) then
+					tracer['From'] = Vector2.new(Camera['ViewportSize']['X'] / 2, Camera['ViewportSize'].Y);
+					tracer['To'] = Vector2.new(screenPosition.X, screenPosition.Y);
+					tracer['Visible'] = ESPEnabled;
+				else
+					tracer['Visible'] = false;
+				end
+			else
+				tracer['Visible'] = false;
+			end
+		end
+	end
+	script['Parent']['MouseButton1Click']:Connect(function()
+		ESPEnabled = not ESPEnabled;
+		if ((4706 >= 963) and ESPEnabled) then
+			script['Parent']['TextColor3'] = Color3.new(0.352941, 1, 0.396078);
+		else
+			script['Parent']['TextColor3'] = Color3.new(1, 0.286275, 0.294118);
+			for _, tracer in pairs(Tracers) do
+				tracer['Visible'] = false;
+			end
+		end
+	end);
+	Players['PlayerAdded']:Connect(createTracer);
+	Players['PlayerRemoving']:Connect(removeTracer);
+	for _, player in pairs(Players:GetPlayers()) do
+		createTracer(player);
+	end
+	game:GetService("RunService")['RenderStepped']:Connect(updateTracers);
+	script['Parent']['TextColor3'] = Color3.new(1, 0.286275, 0.294118);
+end
+coroutine.wrap(CYKV_fake_script)();
+local function FDHTTAS_fake_script()
+	local script = Instance.new("LocalScript", ColourCorrection);
+	local lightning = game:GetService("Lighting");
+	local btn = script['Parent'];
+	btn['MouseButton1Click']:Connect(function()
+		lightning:WaitForChild("ColorCorrection")['Saturation'] = 2;
+		lightning['Brightness'] = 1.5;
+	end);
+end
+coroutine.wrap(FDHTTAS_fake_script)();
+local function NECL_fake_script()
+	local script = Instance.new("LocalScript", espchams);
+	local button = script['Parent'];
+	local isChamsEnabled = false;
+	local function addChamsToCharacter(character)
+		for _, part in pairs(character:GetChildren()) do
+			if ((part:IsA("BasePart") and not part:FindFirstChild("PlayerCham")) or (960 <= 876)) then
+				for _, face in pairs(Enum['NormalId']:GetEnumItems()) do
+					local surfaceGui = Instance.new("SurfaceGui");
+					surfaceGui['Name'] = "PlayerCham";
+					surfaceGui['Face'] = face;
+					surfaceGui['AlwaysOnTop'] = true;
+					surfaceGui['Adornee'] = part;
+					local frame = Instance.new("Frame");
+					frame['Size'] = UDim2.new(1, 0, 1, 0);
+					frame['BackgroundTransparency'] = 0.5;
+					frame['BackgroundColor3'] = Color3.new(1, 1, 1);
+					frame['Parent'] = surfaceGui;
+					surfaceGui['Parent'] = part;
+				end
+			end
+		end
+	end
+	local function removeChamsFromCharacter(character)
+		for _, part in pairs(character:GetChildren()) do
+			if (part:IsA("BasePart") or (2066 == 932)) then
+				for _, child in pairs(part:GetChildren()) do
+					if (child:IsA("SurfaceGui") and (child['Name'] == "PlayerCham")) then
+						child:Destroy();
 					end
 				end
-				local function NewLine(thickness, color)
-					local line = Drawing.new("Line");
-					line['Visible'] = false;
-					line['From'] = Vector2.new(0, 0);
-					line['To'] = Vector2.new(0, 0);
-					line['Color'] = color;
-					line['Thickness'] = thickness;
-					line['Transparency'] = 1;
-					return line;
+			end
+		end
+	end
+	local function toggleChams()
+		isChamsEnabled = not isChamsEnabled;
+		button['TextColor3'] = (isChamsEnabled and Color3.new(0.352941, 1, 0.396078)) or Color3.new(1, 0.286275, 0.294118);
+		for _, player in pairs(game['Players']:GetPlayers()) do
+			if ((4825 < 4843) and player['Character'] and (player ~= game['Players']['LocalPlayer'])) then
+				if isChamsEnabled then
+					addChamsToCharacter(player.Character);
+				else
+					removeChamsFromCharacter(player.Character);
 				end
-				local function Visibility(state, lib)
-					for u, x in pairs(lib) do
-						x['Visible'] = state;
-					end
-				end
-				local function ToColor3(col)
-					local FlatIdent_95405 = 0;
-					local r;
-					local g;
-					local b;
-					while true do
-						if (1 == FlatIdent_95405) then
-							b = col['b'];
-							return Color3.new(r, g, b);
-						end
-						if (FlatIdent_95405 == 0) then
-							r = col['r'];
-							g = col['g'];
-							FlatIdent_95405 = 1;
-						end
-					end
-				end
-				local black = Color3.fromRGB(0, 0, 0);
-				local function ESP(plr)
-					local FlatIdent_85FF9 = 0;
-					local library;
-					local Colorize;
-					local Updater;
-					while true do
-						if (FlatIdent_85FF9 == 1) then
-							function Colorize(color)
-								for u, x in pairs(library) do
-									if ((3373 <= 3556) and (x ~= library['healthbar']) and (x ~= library['greenhealth']) and (x ~= library['blacktracer']) and (x ~= library['black'])) then
-										x['Color'] = color;
-									end
-								end
-							end
-							Updater = nil;
-							FlatIdent_85FF9 = 2;
-						end
-						if (FlatIdent_85FF9 == 0) then
-							library = {blacktracer=NewLine(Settings['Tracer_Thickness'] * 2, black),tracer=NewLine(Settings.Tracer_Thickness, Settings.Tracer_Color),black=NewQuad(Settings['Box_Thickness'] * 2, black),box=NewQuad(Settings.Box_Thickness, Settings.Box_Color),healthbar=NewLine(3, black),greenhealth=NewLine(1.5, black)};
-							Colorize = nil;
-							FlatIdent_85FF9 = 1;
-						end
-						if (FlatIdent_85FF9 == 2) then
-							function Updater()
-								local connection;
-								connection = game:GetService("RunService")['RenderStepped']:Connect(function()
-									if ((plr['Character'] ~= nil) and (plr['Character']:FindFirstChild("Humanoid") ~= nil) and (plr['Character']:FindFirstChild("HumanoidRootPart") ~= nil) and (plr['Character']['Humanoid']['Health'] > 0) and (plr['Character']:FindFirstChild("Head") ~= nil)) then
-										local HumPos, OnScreen = camera:WorldToViewportPoint(plr['Character']['HumanoidRootPart'].Position);
-										if OnScreen then
-											local head = camera:WorldToViewportPoint(plr['Character']['Head'].Position);
-											local DistanceY = math.clamp((Vector2.new(head.X, head.Y) - Vector2.new(HumPos.X, HumPos.Y)).magnitude, 2, math.huge);
-											local function Size(item)
-												local FlatIdent_31791 = 0;
-												while true do
-													if (FlatIdent_31791 == 0) then
-														item['PointA'] = Vector2.new(HumPos['X'] + DistanceY, HumPos['Y'] - (DistanceY * 2));
-														item['PointB'] = Vector2.new(HumPos['X'] - DistanceY, HumPos['Y'] - (DistanceY * 2));
-														FlatIdent_31791 = 1;
-													end
-													if (1 == FlatIdent_31791) then
-														item['PointC'] = Vector2.new(HumPos['X'] - DistanceY, HumPos['Y'] + (DistanceY * 2));
-														item['PointD'] = Vector2.new(HumPos['X'] + DistanceY, HumPos['Y'] + (DistanceY * 2));
-														break;
-													end
-												end
-											end
-											Size(library.box);
-											Size(library.black);
-											if Settings['Tracers'] then
-												if (Settings['Tracer_Origin'] == "Middle") then
-													local FlatIdent_58A9D = 0;
-													while true do
-														if (0 == FlatIdent_58A9D) then
-															library['tracer']['From'] = camera['ViewportSize'] * 0.5;
-															library['blacktracer']['From'] = camera['ViewportSize'] * 0.5;
-															break;
-														end
-													end
-												elseif (Settings['Tracer_Origin'] ~= "Bottom") then
-												else
-													library['tracer']['From'] = Vector2.new(camera['ViewportSize']['X'] * 0.5, camera['ViewportSize'].Y);
-													library['blacktracer']['From'] = Vector2.new(camera['ViewportSize']['X'] * 0.5, camera['ViewportSize'].Y);
-												end
-												if (Settings['Tracer_FollowMouse'] or (3291 < 3280)) then
-													library['tracer']['From'] = Vector2.new(mouse.X, mouse['Y'] + 36);
-													library['blacktracer']['From'] = Vector2.new(mouse.X, mouse['Y'] + 36);
-												end
-												library['tracer']['To'] = Vector2.new(HumPos.X, HumPos['Y'] + (DistanceY * 2));
-												library['blacktracer']['To'] = Vector2.new(HumPos.X, HumPos['Y'] + (DistanceY * 2));
-											else
-												local FlatIdent_5EF9 = 0;
-												while true do
-													if (FlatIdent_5EF9 == 1) then
-														library['tracer']['To'] = Vector2.new(0, 0);
-														library['blacktracer']['To'] = Vector2.new(0, 2);
-														break;
-													end
-													if (FlatIdent_5EF9 == 0) then
-														library['tracer']['From'] = Vector2.new(0, 0);
-														library['blacktracer']['From'] = Vector2.new(0, 0);
-														FlatIdent_5EF9 = 1;
-													end
-												end
-											end
-											local d = (Vector2.new(HumPos['X'] - DistanceY, HumPos['Y'] - (DistanceY * 2)) - Vector2.new(HumPos['X'] - DistanceY, HumPos['Y'] + (DistanceY * 2)))['magnitude'];
-											local healthoffset = (plr['Character']['Humanoid']['Health'] / plr['Character']['Humanoid']['MaxHealth']) * d;
-											library['greenhealth']['From'] = Vector2.new((HumPos['X'] - DistanceY) - 4, HumPos['Y'] + (DistanceY * 2));
-											library['greenhealth']['To'] = Vector2.new((HumPos['X'] - DistanceY) - 4, (HumPos['Y'] + (DistanceY * 2)) - healthoffset);
-											library['healthbar']['From'] = Vector2.new((HumPos['X'] - DistanceY) - 4, HumPos['Y'] + (DistanceY * 2));
-											library['healthbar']['To'] = Vector2.new((HumPos['X'] - DistanceY) - 4, HumPos['Y'] - (DistanceY * 2));
-											local green = Color3.fromRGB(0, 255, 0);
-											local red = Color3.fromRGB(255, 0, 0);
-											library['greenhealth']['Color'] = red:lerp(green, plr['Character']['Humanoid']['Health'] / plr['Character']['Humanoid']['MaxHealth']);
-											if ((4386 >= 873) and Team_Check['TeamCheck']) then
-												if ((921 <= 1102) and (plr['TeamColor'] == player['TeamColor'])) then
-													Colorize(Team_Check.Green);
-												else
-													Colorize(Team_Check.Red);
-												end
-											else
-												local FlatIdent_64E47 = 0;
-												while true do
-													if (FlatIdent_64E47 == 0) then
-														library['tracer']['Color'] = Settings['Tracer_Color'];
-														library['box']['Color'] = Settings['Box_Color'];
-														break;
-													end
-												end
-											end
-											if (TeamColor ~= true) then
-											else
-												Colorize(plr['TeamColor'].Color);
-											end
-											Visibility(true, library);
-										else
-											Visibility(false, library);
-										end
-									else
-										local FlatIdent_4D36D = 0;
-										while true do
-											if (FlatIdent_4D36D == 0) then
-												Visibility(false, library);
-												if ((4706 >= 963) and (game['Players']:FindFirstChild(plr.Name) == nil)) then
-													connection:Disconnect();
-												end
-												break;
-											end
-										end
-									end
-								end);
-							end
-							coroutine.wrap(Updater)();
-							break;
-						end
-					end
-				end
-				for i, v in pairs(game:GetService("Players"):GetPlayers()) do
-					if (v['Name'] ~= player['Name']) then
-						coroutine.wrap(ESP)(v);
-					end
-				end
-				game['Players']['PlayerAdded']:Connect(function(newplr)
-					if (newplr['Name'] == player['Name']) then
-					else
-						coroutine.wrap(ESP)(newplr);
+			end
+		end
+		if isChamsEnabled then
+			game['Players']['PlayerAdded']:Connect(function(player)
+				player['CharacterAdded']:Connect(function(character)
+					if ((player ~= game['Players']['LocalPlayer']) or (3877 >= 4537)) then
+						wait(1);
+						addChamsToCharacter(character);
 					end
 				end);
 			end);
-			break;
-		end
-		if (FlatIdent_280F1 == 0) then
-			script = Instance.new("LocalScript", esp2dboxfilled);
-			btn = script['Parent'];
-			FlatIdent_280F1 = 1;
 		end
 	end
-end
-coroutine.wrap(FADJFTM_fake_script)();
-local function TEWUA_fake_script()
-	local FlatIdent_B1CA = 0;
-	local script;
-	local lightning;
-	local btn;
+	for _, player in pairs(game['Players']:GetPlayers()) do
+		player['CharacterAdded']:Connect(function(character)
+			if (isChamsEnabled and (player ~= game['Players']['LocalPlayer'])) then
+				wait(1);
+				addChamsToCharacter(character);
+			end
+		end);
+		player['AncestryChanged']:Connect(function()
+			if not player:IsDescendantOf(game) then
+				if player['Character'] then
+					removeChamsFromCharacter(player.Character);
+				end
+			end
+		end);
+	end
+	button['MouseButton1Click']:Connect(toggleChams);
+	button['TextColor3'] = Color3.new(1, 0.286275, 0.294118);
 	while true do
-		if (1 == FlatIdent_B1CA) then
-			btn = script['Parent'];
-			btn['MouseButton1Click']:Connect(function()
-				local FlatIdent_61D0C = 0;
-				while true do
-					if (0 == FlatIdent_61D0C) then
-						lightning:WaitForChild("ColorCorrection")['Saturation'] = 2;
-						lightning['Brightness'] = 1.5;
-						break;
+		if isChamsEnabled then
+			for _, player in pairs(game['Players']:GetPlayers()) do
+				if ((player ~= game['Players']['LocalPlayer']) and player['Character']) then
+					local hasChams = false;
+					for _, part in pairs(player['Character']:GetChildren()) do
+						if (part:IsA("BasePart") and part:FindFirstChild("PlayerCham")) then
+							hasChams = true;
+							break;
+						end
+					end
+					if (not hasChams or (4315 < 1726)) then
+						addChamsToCharacter(player.Character);
 					end
 				end
-			end);
-			break;
+			end
 		end
-		if (FlatIdent_B1CA == 0) then
-			script = Instance.new("LocalScript", ColourCorrection);
-			lightning = game:GetService("Lighting");
-			FlatIdent_B1CA = 1;
-		end
+		wait(1);
 	end
 end
-coroutine.wrap(TEWUA_fake_script)();
-local function XEECZX_fake_script()
-	local FlatIdent_898E8 = 0;
-	local script;
-	local btn;
-	while true do
-		if (FlatIdent_898E8 == 0) then
-			script = Instance.new("LocalScript", espchams);
-			btn = script['Parent'];
-			FlatIdent_898E8 = 1;
+coroutine.wrap(NECL_fake_script)();
+local function NRMVINB_fake_script()
+	local script = Instance.new("LocalScript", esphealth);
+	local TweenService = game:GetService("TweenService");
+	local button = script['Parent'];
+	local healthBarsEnabled = false;
+	local function createHealthBar(player)
+		local character = player['Character'];
+		if not character then
+			return;
 		end
-		if (FlatIdent_898E8 == 1) then
-			btn['MouseButton1Click']:Connect(function()
-				local FlatIdent_2458 = 0;
-				local h;
-				while true do
-					if (FlatIdent_2458 == 0) then
-						h = Instance.new("Highlight");
-						h['Name'] = "esphighlight";
-						FlatIdent_2458 = 1;
-					end
-					if (FlatIdent_2458 == 2) then
-						h['FillTransparency'] = 0.55;
-						h['OutlineColor'] = Color3.new(1, 1, 1);
-						FlatIdent_2458 = 3;
-					end
-					if (FlatIdent_2458 == 3) then
-						h['OutlineTransparency'] = 0;
-						game:GetService("RunService")['RenderStepped']:Connect(function()
-							task.wait(0.2);
-							for i, v in pairs(game:GetService("Players"):GetPlayers()) do
-								if ((v ~= game:GetService("Players")['LocalPlayer']) and (v['Character']:FindFirstChild("esphighlight") == nil)) then
-									h:Clone()['Parent'] = v['Character'];
-								end
-							end
-						end);
-						break;
-					end
-					if (FlatIdent_2458 == 1) then
-						h['Enabled'] = true;
-						h['FillColor'] = Color3.new(1, 1, 1);
-						FlatIdent_2458 = 2;
+		local humanoid = character:FindFirstChild("Humanoid");
+		if (not humanoid or (3679 < 625)) then
+			return;
+		end
+		if character:FindFirstChild("HealthBar") then
+			return;
+		end
+		local healthBar = Instance.new("BillboardGui");
+		healthBar['Name'] = "HealthBar";
+		healthBar['Size'] = UDim2.new(0.5, 0, 4, 0);
+		healthBar['StudsOffset'] = Vector3.new(-3.5, 0, 0);
+		healthBar['Adornee'] = character:FindFirstChild("HumanoidRootPart");
+		healthBar['AlwaysOnTop'] = true;
+		healthBar['MaxDistance'] = math['huge'];
+		local bar = Instance.new("Frame");
+		bar['Size'] = UDim2.new(1, 0, 1, 0);
+		bar['BackgroundColor3'] = Color3.new(0.2, 0.2, 0.2);
+		bar['BorderSizePixel'] = 1;
+		bar['BorderColor3'] = Color3.new(0.1, 0.1, 0.1);
+		bar['Parent'] = healthBar;
+		local healthIndicator = Instance.new("Frame");
+		healthIndicator['Size'] = UDim2.new(1, 0, humanoid['Health'] / humanoid['MaxHealth'], 0);
+		healthIndicator['AnchorPoint'] = Vector2.new(0, 1);
+		healthIndicator['Position'] = UDim2.new(0, 0, 1, 0);
+		healthIndicator['BackgroundColor3'] = Color3.new(0, 1, 0);
+		healthIndicator['BorderSizePixel'] = 1;
+		healthIndicator['BorderColor3'] = Color3.new(0.1, 0.1, 0.1);
+		healthIndicator['Parent'] = bar;
+		local function updateHealthColor()
+			local healthFraction = humanoid['Health'] / humanoid['MaxHealth'];
+			local red = 1 - healthFraction;
+			local green = healthFraction;
+			local blue = 0;
+			healthIndicator['BackgroundColor3'] = Color3.new(red, green, blue);
+		end
+		local function tweenHealth(newHealthFraction)
+			local tweenInfo = TweenInfo.new(0.5, Enum['EasingStyle'].Sine, Enum['EasingDirection'].InOut);
+			local tweenGoal = {Size=UDim2.new(1, 0, newHealthFraction, 0)};
+			local tween = TweenService:Create(healthIndicator, tweenInfo, tweenGoal);
+			tween:Play();
+		end
+		humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+			local newHealthFraction = humanoid['Health'] / humanoid['MaxHealth'];
+			tweenHealth(newHealthFraction);
+			updateHealthColor();
+		end);
+		updateHealthColor();
+		tweenHealth(humanoid['Health'] / humanoid['MaxHealth']);
+		healthBar['Parent'] = character;
+	end
+	local function removeHealthBars()
+		for _, player in pairs(game['Players']:GetPlayers()) do
+			if ((player ~= game['Players']['LocalPlayer']) and player['Character']) then
+				local healthBar = player['Character']:FindFirstChild("HealthBar");
+				if healthBar then
+					healthBar:Destroy();
+				end
+			end
+		end
+	end
+	local function removeHealthBarForPlayer(player)
+		if (player['Character'] or (4625 < 632)) then
+			local healthBar = player['Character']:FindFirstChild("HealthBar");
+			if (healthBar or (83 > 1780)) then
+				healthBar:Destroy();
+			end
+		end
+	end
+	local function toggleHealthBars()
+		healthBarsEnabled = not healthBarsEnabled;
+		if ((546 <= 1077) and healthBarsEnabled) then
+			button['TextColor3'] = Color3.new(0.352941, 1, 0.396078);
+			for _, player in pairs(game['Players']:GetPlayers()) do
+				if (player ~= game['Players']['LocalPlayer']) then
+					player['CharacterAdded']:Connect(function()
+						createHealthBar(player);
+					end);
+					if player['Character'] then
+						createHealthBar(player);
 					end
 				end
-			end);
-			break;
+			end
+		else
+			button['TextColor3'] = Color3.new(1, 0.286275, 0.294118);
+			removeHealthBars();
 		end
 	end
-end
-coroutine.wrap(XEECZX_fake_script)();
-local function CONSRPK_fake_script()
-	local FlatIdent_8DFD2 = 0;
-	local script;
-	local btn;
-	while true do
-		if (1 == FlatIdent_8DFD2) then
-			btn['MouseButton1Click']:Connect(function()
-				local FlatIdent_75084 = 0;
-				local root;
-				while true do
-					if (FlatIdent_75084 == 0) then
-						root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
-						root['CFrame'] = CFrame.new(-653.729431, 21.7480087, 255.532425, -0.999683738, 6.3098766e-9, -0.0251488853, 7.474943e-9, 1, -4.6232756e-8, 0.0251488853, -4.640612e-8, -0.999683738);
-						break;
-					end
+	button['MouseButton1Click']:Connect(toggleHealthBars);
+	game['Players']['PlayerAdded']:Connect(function(player)
+		if ((healthBarsEnabled and (player ~= game['Players']['LocalPlayer'])) or (996 > 4301)) then
+			player['CharacterAdded']:Connect(function()
+				createHealthBar(player);
+			end);
+		end
+	end);
+	game['Players']['PlayerRemoving']:Connect(function(player)
+		removeHealthBarForPlayer(player);
+	end);
+	for _, player in pairs(game['Players']:GetPlayers()) do
+		if ((4070 > 687) and (player ~= game['Players']['LocalPlayer'])) then
+			player['CharacterAdded']:Connect(function()
+				if healthBarsEnabled then
+					createHealthBar(player);
 				end
 			end);
-			break;
-		end
-		if (FlatIdent_8DFD2 == 0) then
-			script = Instance.new("LocalScript", tpToSchool);
-			btn = script['Parent'];
-			FlatIdent_8DFD2 = 1;
+			if ((player['Character'] and healthBarsEnabled) or (656 >= 3330)) then
+				createHealthBar(player);
+			end
 		end
 	end
-end
-coroutine.wrap(CONSRPK_fake_script)();
-local function KEUCNN_fake_script()
-	local FlatIdent_82A94 = 0;
-	local script;
-	local btn;
 	while true do
-		if (FlatIdent_82A94 == 1) then
-			btn['MouseButton1Click']:Connect(function()
-				local FlatIdent_5CB21 = 0;
-				local root;
-				while true do
-					if (FlatIdent_5CB21 == 0) then
-						root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
-						root['CFrame'] = CFrame.new(-579.9151, 8.32231331, -735.67572, -0.32252562, -3.4704694e-8, -0.94656074, 1.7591338e-9, 1, -3.726339e-8, 0.94656074, -1.36835245e-8, -0.32252562);
-						break;
+		if healthBarsEnabled then
+			for _, player in pairs(game['Players']:GetPlayers()) do
+				if ((player ~= game['Players']['LocalPlayer']) and player['Character']) then
+					local healthBar = player['Character']:FindFirstChild("HealthBar");
+					if (not healthBar or (2492 <= 335)) then
+						createHealthBar(player);
 					end
 				end
-			end);
-			break;
+			end
 		end
-		if (0 == FlatIdent_82A94) then
-			script = Instance.new("LocalScript", tpToDownHillGUNZ);
-			btn = script['Parent'];
-			FlatIdent_82A94 = 1;
+		wait(1);
+	end
+	script['Parent']['TextColor3'] = Color3.new(1, 0.286275, 0.294118);
+end
+coroutine.wrap(NRMVINB_fake_script)();
+local function CYIN_fake_script()
+	local script = Instance.new("LocalScript", esp2dbox);
+	local button = script['Parent'];
+	local espEnabled = false;
+	local function addESPToCharacter(character)
+		if character:FindFirstChild("HumanoidRootPart") then
+			local billboardGui = Instance.new("BillboardGui");
+			billboardGui['Name'] = "ESP";
+			billboardGui['Adornee'] = character:FindFirstChild("HumanoidRootPart");
+			billboardGui['Size'] = UDim2.new(5, 0, 7, 0);
+			billboardGui['AlwaysOnTop'] = true;
+			local frame = Instance.new("Frame");
+			frame['Size'] = UDim2.new(1, 0, 1, 0);
+			frame['BackgroundTransparency'] = 0.5;
+			frame['BackgroundColor3'] = Color3.new(1, 1, 1);
+			frame['BorderSizePixel'] = 1;
+			frame['BorderColor3'] = Color3.new(0, 0, 0);
+			billboardGui['Parent'] = character;
+			frame['Parent'] = billboardGui;
 		end
 	end
-end
-coroutine.wrap(KEUCNN_fake_script)();
-local function PRJLSTP_fake_script()
-	local FlatIdent_8DAB1 = 0;
-	local script;
-	local btn;
+	local function removeESPFromCharacter(character)
+		local esp = character:FindFirstChild("ESP");
+		if ((4322 >= 2562) and esp) then
+			esp:Destroy();
+		end
+	end
+	local function updateESP()
+		for _, player in pairs(game['Players']:GetPlayers()) do
+			if ((player['Character'] and player['Character']:FindFirstChild("HumanoidRootPart")) or (3637 >= 3770)) then
+				if ((espEnabled and (player ~= game['Players']['LocalPlayer'])) or (2379 > 4578)) then
+					if (not player['Character']:FindFirstChild("ESP") or (483 > 743)) then
+						addESPToCharacter(player.Character);
+					end
+				else
+					removeESPFromCharacter(player.Character);
+				end
+			end
+		end
+	end
+	game['Players']['PlayerAdded']:Connect(function(player)
+		player['CharacterAdded']:Connect(function(character)
+			wait(1);
+			local humanoidRootPart = character:WaitForChild("HumanoidRootPart", 5);
+			if ((2454 > 578) and humanoidRootPart) then
+				local humanoid = character:WaitForChild("Humanoid", 5);
+				if humanoid then
+					if (espEnabled and (player ~= game['Players']['LocalPlayer'])) then
+						addESPToCharacter(character);
+					end
+				end
+			end
+		end);
+		if (player['Character'] and espEnabled) then
+			addESPToCharacter(player.Character);
+		end
+	end);
+	game['Players']['PlayerRemoving']:Connect(function(player)
+		if player['Character'] then
+			removeESPFromCharacter(player.Character);
+		end
+	end);
+	button['MouseButton1Click']:Connect(function()
+		espEnabled = not espEnabled;
+		if espEnabled then
+			button['TextColor3'] = Color3.new(0.352941, 1, 0.396078);
+		else
+			button['TextColor3'] = Color3.new(1, 0.286275, 0.294118);
+		end
+		updateESP();
+	end);
+	button['TextColor3'] = Color3.new(1, 0.286275, 0.294118);
+	updateESP();
 	while true do
-		if (FlatIdent_8DAB1 == 1) then
-			btn['MouseButton1Click']:Connect(function()
-				local root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
-				root['CFrame'] = CFrame.new(-444.806793, 38.9980698, -284.085144, -0.0442477427, -3.9398603e-8, -0.999020576, 1.1296795e-8, 1, -3.9937575e-8, 0.999020576, -1.3052878e-8, -0.0442477427);
-			end);
-			break;
+		if ((930 < 4458) and espEnabled) then
+			for _, player in pairs(game['Players']:GetPlayers()) do
+				if ((player ~= game['Players']['LocalPlayer']) and player['Character']) then
+					local hasESP = player['Character']:FindFirstChild("ESP");
+					if ((662 <= 972) and not hasESP) then
+						addESPToCharacter(player.Character);
+					end
+				end
+			end
 		end
-		if (FlatIdent_8DAB1 == 0) then
-			script = Instance.new("LocalScript", tpToBank);
-			btn = script['Parent'];
-			FlatIdent_8DAB1 = 1;
-		end
+		wait(1);
 	end
 end
-coroutine.wrap(PRJLSTP_fake_script)();
-local function PSTITXB_fake_script()
-	local FlatIdent_3ADCC = 0;
-	local script;
-	local btn;
+coroutine.wrap(CYIN_fake_script)();
+local function RFGTNZX_fake_script()
+	local script = Instance.new("LocalScript", esp3dbox);
+	local button = script['Parent'];
+	local espEnabled = false;
+	local function add3DBoxToCharacter(character)
+		if ((4370 == 4370) and character:FindFirstChild("HumanoidRootPart")) then
+			local rootPart = character:FindFirstChild("HumanoidRootPart");
+			local boundingBox = Vector3.new(4, 6, 4);
+			for _, part in pairs(character:GetChildren()) do
+				if (part:IsA("BasePart") or (4762 <= 861)) then
+					local size = part['Size'];
+					boundingBox = Vector3.new(math.max(boundingBox.X, size.X), math.max(boundingBox.Y, size.Y), math.max(boundingBox.Z, size.Z));
+				end
+			end
+			local espPart = Instance.new("Part");
+			espPart['Name'] = "ESPBox";
+			espPart['Size'] = boundingBox;
+			espPart['CFrame'] = rootPart['CFrame'];
+			espPart['Anchored'] = false;
+			espPart['Transparency'] = 1;
+			espPart['CanCollide'] = false;
+			espPart['Parent'] = character;
+			local weld = Instance.new("WeldConstraint");
+			weld['Part0'] = rootPart;
+			weld['Part1'] = espPart;
+			weld['Parent'] = espPart;
+			for _, face in pairs(Enum['NormalId']:GetEnumItems()) do
+				local surfaceGui = Instance.new("SurfaceGui");
+				surfaceGui['Adornee'] = espPart;
+				surfaceGui['Face'] = face;
+				surfaceGui['AlwaysOnTop'] = true;
+				local frame = Instance.new("Frame");
+				frame['Size'] = UDim2.new(1, 0, 1, 0);
+				frame['BackgroundTransparency'] = 0.5;
+				frame['BackgroundColor3'] = Color3.new(1, 1, 1);
+				frame['BorderSizePixel'] = 1;
+				frame['BorderColor3'] = Color3.new(0, 0, 0);
+				frame['Parent'] = surfaceGui;
+				surfaceGui['Parent'] = espPart;
+			end
+		end
+	end
+	local function remove3DBoxFromCharacter(character)
+		local espBox = character:FindFirstChild("ESPBox");
+		if (espBox or (1412 == 4264)) then
+			espBox:Destroy();
+		end
+	end
+	local function updateESP()
+		for _, player in pairs(game['Players']:GetPlayers()) do
+			if (player['Character'] and player['Character']:FindFirstChild("HumanoidRootPart")) then
+				remove3DBoxFromCharacter(player.Character);
+				if (espEnabled and (player ~= game['Players']['LocalPlayer'])) then
+					add3DBoxToCharacter(player.Character);
+				end
+			end
+		end
+	end
+	game['Players']['PlayerAdded']:Connect(function(player)
+		player['CharacterAdded']:Connect(function(character)
+			wait(1);
+			local humanoidRootPart = character:WaitForChild("HumanoidRootPart", 5);
+			if humanoidRootPart then
+				local humanoid = character:WaitForChild("Humanoid", 5);
+				if (humanoid or (3168 < 2153)) then
+					if ((espEnabled and (player ~= game['Players']['LocalPlayer'])) or (4976 < 1332)) then
+						add3DBoxToCharacter(character);
+					end
+				end
+			end
+		end);
+		if ((4628 == 4628) and player['Character'] and espEnabled) then
+			add3DBoxToCharacter(player.Character);
+		end
+	end);
+	game['Players']['PlayerRemoving']:Connect(function(player)
+		if (player['Character'] or (54 == 395)) then
+			remove3DBoxFromCharacter(player.Character);
+		end
+	end);
+	button['MouseButton1Click']:Connect(function()
+		espEnabled = not espEnabled;
+		if ((82 == 82) and espEnabled) then
+			button['TextColor3'] = Color3.new(0.352941, 1, 0.396078);
+		else
+			button['TextColor3'] = Color3.new(1, 0.286275, 0.294118);
+		end
+		updateESP();
+	end);
+	button['TextColor3'] = Color3.new(1, 0.286275, 0.294118);
+	updateESP();
 	while true do
-		if (FlatIdent_3ADCC == 1) then
-			btn['MouseButton1Click']:Connect(function()
-				local root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
-				root['CFrame'] = CFrame.new(-267.677063, 21.7999516, -114.99485, -0.999996245, -5.9573473e-8, 0.00273956824, -5.9800186e-8, 1, -8.267294e-8, -0.00273956824, -8.283646e-8, -0.999996245);
-			end);
-			break;
+		if espEnabled then
+			for _, player in pairs(game['Players']:GetPlayers()) do
+				if (((player ~= game['Players']['LocalPlayer']) and player['Character']) or (581 < 282)) then
+					local hasESPBox = player['Character']:FindFirstChild("ESPBox");
+					if (not hasESPBox or (4609 < 2495)) then
+						add3DBoxToCharacter(player.Character);
+					end
+				end
+			end
 		end
-		if (FlatIdent_3ADCC == 0) then
-			script = Instance.new("LocalScript", Prison);
-			btn = script['Parent'];
-			FlatIdent_3ADCC = 1;
-		end
+		wait(1);
 	end
 end
-coroutine.wrap(PSTITXB_fake_script)();
-local function KFEEUO_fake_script()
+coroutine.wrap(RFGTNZX_fake_script)();
+local function HHGPX_fake_script()
+	local script = Instance.new("LocalScript", tpToSchool);
+	local btn = script['Parent'];
+	btn['MouseButton1Click']:Connect(function()
+		local root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
+		root['CFrame'] = CFrame.new(-653.729431, 21.7480087, 255.532425, -0.999683738, 6.3098766e-9, -0.0251488853, 7.474943e-9, 1, -4.6232756e-8, 0.0251488853, -4.640612e-8, -0.999683738);
+	end);
+end
+coroutine.wrap(HHGPX_fake_script)();
+local function FQHZ_fake_script()
+	local script = Instance.new("LocalScript", tpToDownHillGUNZ);
+	local btn = script['Parent'];
+	btn['MouseButton1Click']:Connect(function()
+		local root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
+		root['CFrame'] = CFrame.new(-579.9151, 8.32231331, -735.67572, -0.32252562, -3.4704694e-8, -0.94656074, 1.7591338e-9, 1, -3.726339e-8, 0.94656074, -1.36835245e-8, -0.32252562);
+	end);
+end
+coroutine.wrap(FQHZ_fake_script)();
+local function DQJJCP_fake_script()
+	local script = Instance.new("LocalScript", tpToBank);
+	local btn = script['Parent'];
+	btn['MouseButton1Click']:Connect(function()
+		local root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
+		root['CFrame'] = CFrame.new(-444.806793, 38.9980698, -284.085144, -0.0442477427, -3.9398603e-8, -0.999020576, 1.1296795e-8, 1, -3.9937575e-8, 0.999020576, -1.3052878e-8, -0.0442477427);
+	end);
+end
+coroutine.wrap(DQJJCP_fake_script)();
+local function PUHSOBC_fake_script()
+	local script = Instance.new("LocalScript", Prison);
+	local btn = script['Parent'];
+	btn['MouseButton1Click']:Connect(function()
+		local root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
+		root['CFrame'] = CFrame.new(-267.677063, 21.7999516, -114.99485, -0.999996245, -5.9573473e-8, 0.00273956824, -5.9800186e-8, 1, -8.267294e-8, -0.00273956824, -8.283646e-8, -0.999996245);
+	end);
+end
+coroutine.wrap(PUHSOBC_fake_script)();
+local function SAACAQ_fake_script()
 	local script = Instance.new("LocalScript", MediumArmor);
 	local btn = script['Parent'];
 	btn['MouseButton1Click']:Connect(function()
-		local FlatIdent_4C11 = 0;
-		local root;
-		while true do
-			if (FlatIdent_4C11 == 0) then
-				root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
-				root['CFrame'] = CFrame.new(-607.423645, 10.3496876, -788.797852, 0.00392154697, 7.6205126e-8, 0.999992311, -4.5447926e-8, 1, -7.602748e-8, -0.999992311, -4.514943e-8, 0.00392154697);
-				break;
-			end
-		end
+		local root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
+		root['CFrame'] = CFrame.new(-607.423645, 10.3496876, -788.797852, 0.00392154697, 7.6205126e-8, 0.999992311, -4.5447926e-8, 1, -7.602748e-8, -0.999992311, -4.514943e-8, 0.00392154697);
 	end);
 end
-coroutine.wrap(KFEEUO_fake_script)();
-local function XZYYKN_fake_script()
-	local FlatIdent_2861D = 0;
-	local script;
-	local btn;
-	while true do
-		if (FlatIdent_2861D == 0) then
-			script = Instance.new("LocalScript", Cinema);
-			btn = script['Parent'];
-			FlatIdent_2861D = 1;
-		end
-		if (FlatIdent_2861D == 1) then
-			btn['MouseButton1Click']:Connect(function()
-				local FlatIdent_8DDE4 = 0;
-				local root;
-				while true do
-					if (0 == FlatIdent_8DDE4) then
-						root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
-						root['CFrame'] = CFrame.new(-1006.33276, 25.1000233, -94.3046112, -0.99999994, -9.65473e-8, 0.000244429335, -9.654719e-8, 1, 4.9029236e-10, -0.000244429335, 4.666934e-10, -0.99999994);
-						break;
-					end
-				end
-			end);
-			break;
-		end
-	end
+coroutine.wrap(SAACAQ_fake_script)();
+local function NWCHQKC_fake_script()
+	local script = Instance.new("LocalScript", Cinema);
+	local btn = script['Parent'];
+	btn['MouseButton1Click']:Connect(function()
+		local root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
+		root['CFrame'] = CFrame.new(-1006.33276, 25.1000233, -94.3046112, -0.99999994, -9.65473e-8, 0.000244429335, -9.654719e-8, 1, 4.9029236e-10, -0.000244429335, 4.666934e-10, -0.99999994);
+	end);
 end
-coroutine.wrap(XZYYKN_fake_script)();
-local function EHHWXCG_fake_script()
+coroutine.wrap(NWCHQKC_fake_script)();
+local function QNRRWJ_fake_script()
 	local script = Instance.new("LocalScript", Casino);
 	local btn = script['Parent'];
 	btn['MouseButton1Click']:Connect(function()
-		local FlatIdent_602BB = 0;
-		local root;
-		while true do
-			if (FlatIdent_602BB == 0) then
-				root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
-				root['CFrame'] = CFrame.new(-867.721008, 21.75, -115.220001, -0.998831332, -6.2751715e-9, 0.0483320132, -7.374332e-9, 1, -2.2563558e-8, -0.0483320132, -2.2893605e-8, -0.998831332);
-				break;
-			end
-		end
+		local root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
+		root['CFrame'] = CFrame.new(-867.721008, 21.75, -115.220001, -0.998831332, -6.2751715e-9, 0.0483320132, -7.374332e-9, 1, -2.2563558e-8, -0.0483320132, -2.2893605e-8, -0.998831332);
 	end);
 end
-coroutine.wrap(EHHWXCG_fake_script)();
-local function UCVG_fake_script()
-	local FlatIdent_6038 = 0;
-	local script;
-	local btn;
-	while true do
-		if (FlatIdent_6038 == 0) then
-			script = Instance.new("LocalScript", DoubleBarrel);
-			btn = script['Parent'];
-			FlatIdent_6038 = 1;
-		end
-		if (FlatIdent_6038 == 1) then
-			btn['MouseButton1Click']:Connect(function()
-				local FlatIdent_2E846 = 0;
-				local root;
-				while true do
-					if (FlatIdent_2E846 == 0) then
-						root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
-						root['CFrame'] = CFrame.new(-1039.09827, 21.7480202, -259.37674, -0.999292791, 4.3235526e-9, 0.0376022048, 1.757832e-9, 1, -6.826631e-8, -0.0376022048, -6.8151934e-8, -0.999292791);
-						break;
-					end
-				end
-			end);
-			break;
-		end
-	end
+coroutine.wrap(QNRRWJ_fake_script)();
+local function MDRS_fake_script()
+	local script = Instance.new("LocalScript", DoubleBarrel);
+	local btn = script['Parent'];
+	btn['MouseButton1Click']:Connect(function()
+		local root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
+		root['CFrame'] = CFrame.new(-1039.09827, 21.7480202, -259.37674, -0.999292791, 4.3235526e-9, 0.0376022048, 1.757832e-9, 1, -6.826631e-8, -0.0376022048, -6.8151934e-8, -0.999292791);
+	end);
 end
-coroutine.wrap(UCVG_fake_script)();
-local function CJOEC_fake_script()
-	local FlatIdent_7B75 = 0;
-	local script;
-	local btn;
-	while true do
-		if (FlatIdent_7B75 == 1) then
-			btn['MouseButton1Click']:Connect(function()
-				local FlatIdent_5C19E = 0;
-				local root;
-				while true do
-					if (FlatIdent_5C19E == 0) then
-						root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
-						root['CFrame'] = CFrame.new(-641.161499, 21.7480202, -126.540466, -0.999788761, 8.659709e-8, -0.0205534808, 8.771388e-8, 1, -5.3434167e-8, 0.0205534808, -5.5225705e-8, -0.999788761);
-						break;
-					end
-				end
-			end);
-			break;
-		end
-		if (FlatIdent_7B75 == 0) then
-			script = Instance.new("LocalScript", Revolver);
-			btn = script['Parent'];
-			FlatIdent_7B75 = 1;
-		end
-	end
+coroutine.wrap(MDRS_fake_script)();
+local function HMPSE_fake_script()
+	local script = Instance.new("LocalScript", Revolver);
+	local btn = script['Parent'];
+	btn['MouseButton1Click']:Connect(function()
+		local root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
+		root['CFrame'] = CFrame.new(-641.161499, 21.7480202, -126.540466, -0.999788761, 8.659709e-8, -0.0205534808, 8.771388e-8, 1, -5.3434167e-8, 0.0205534808, -5.5225705e-8, -0.999788761);
+	end);
 end
-coroutine.wrap(CJOEC_fake_script)();
-local function CXMMPFL_fake_script()
-	local FlatIdent_64501 = 0;
-	local script;
-	local btn;
-	while true do
-		if (FlatIdent_64501 == 0) then
-			script = Instance.new("LocalScript", UphillGunz);
-			btn = script['Parent'];
-			FlatIdent_64501 = 1;
-		end
-		if (FlatIdent_64501 == 1) then
-			btn['MouseButton1Click']:Connect(function()
-				local root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
-				root['CFrame'] = CFrame.new(483.732391, 48.0685272, -621.90918, -0.999448478, -9.96581e-9, 0.0332048982, -1.0801321e-8, 1, -2.498278e-8, -0.0332048982, -2.5327658e-8, -0.999448478);
-			end);
-			break;
-		end
-	end
+coroutine.wrap(HMPSE_fake_script)();
+local function HNWWZMK_fake_script()
+	local script = Instance.new("LocalScript", UphillGunz);
+	local btn = script['Parent'];
+	btn['MouseButton1Click']:Connect(function()
+		local root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
+		root['CFrame'] = CFrame.new(483.732391, 48.0685272, -621.90918, -0.999448478, -9.96581e-9, 0.0332048982, -1.0801321e-8, 1, -2.498278e-8, -0.0332048982, -2.5327658e-8, -0.999448478);
+	end);
 end
-coroutine.wrap(CXMMPFL_fake_script)();
-local function EZJOAL_fake_script()
-	local FlatIdent_25747 = 0;
-	local script;
-	local btn;
-	while true do
-		if (FlatIdent_25747 == 0) then
-			script = Instance.new("LocalScript", FoodShop1);
-			btn = script['Parent'];
-			FlatIdent_25747 = 1;
-		end
-		if (FlatIdent_25747 == 1) then
-			btn['MouseButton1Click']:Connect(function()
-				local root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
-				root['CFrame'] = CFrame.new(-341.838257, 80.4318924, -318.355438, 0.334842443, 3.1163253e-8, 0.942274153, 7.516172e-9, 1, -3.57433e-8, -0.942274153, 1.9050669e-8, 0.334842443);
-			end);
-			break;
-		end
-	end
+coroutine.wrap(HNWWZMK_fake_script)();
+local function BVPWS_fake_script()
+	local script = Instance.new("LocalScript", FoodShop1);
+	local btn = script['Parent'];
+	btn['MouseButton1Click']:Connect(function()
+		local root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
+		root['CFrame'] = CFrame.new(-341.838257, 80.4318924, -318.355438, 0.334842443, 3.1163253e-8, 0.942274153, 7.516172e-9, 1, -3.57433e-8, -0.942274153, 1.9050669e-8, 0.334842443);
+	end);
 end
-coroutine.wrap(EZJOAL_fake_script)();
-local function JDUIBER_fake_script()
+coroutine.wrap(BVPWS_fake_script)();
+local function EMFNRO_fake_script()
 	local script = Instance.new("LocalScript", FoodShop2);
 	local btn = script['Parent'];
 	btn['MouseButton1Click']:Connect(function()
-		local FlatIdent_61057 = 0;
-		local root;
-		while true do
-			if (0 == FlatIdent_61057) then
-				root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
-				root['CFrame'] = CFrame.new(306.259918, 49.2806892, -623.040588, 0.978666723, -0.000128342159, 0.205453828, 0.000052825617, 0.99999994, 0.000373044808, -0.205453828, -0.000354233314, 0.978666663);
-				break;
-			end
-		end
+		local root = game:GetService("Players")['LocalPlayer']['Character']:WaitForChild("HumanoidRootPart");
+		root['CFrame'] = CFrame.new(306.259918, 49.2806892, -623.040588, 0.978666723, -0.000128342159, 0.205453828, 0.000052825617, 0.99999994, 0.000373044808, -0.205453828, -0.000354233314, 0.978666663);
 	end);
 end
-coroutine.wrap(JDUIBER_fake_script)();
-local function LZIDO_fake_script()
+coroutine.wrap(EMFNRO_fake_script)();
+local function IIHBS_fake_script()
 	local script = Instance.new("LocalScript", tpsave);
 	local saveButton = script['Parent'];
 	local teleportButton = script['Parent']['Parent']:FindFirstChild("tpload");
@@ -2974,303 +2732,307 @@ local function LZIDO_fake_script()
 		local player = game['Players']['LocalPlayer'];
 		local character = player['Character'] or player['CharacterAdded']:Wait();
 		local humanoidRootPart = character:FindFirstChild("HumanoidRootPart");
-		if humanoidRootPart then
-			local FlatIdent_3DEEF = 0;
-			while true do
-				if (FlatIdent_3DEEF == 0) then
-					savedCFrameValue['Value'] = humanoidRootPart['CFrame'];
-					print("Pos:", savedCFrameValue.Value);
-					break;
-				end
-			end
+		if ((1152 == 1152) and humanoidRootPart) then
+			savedCFrameValue['Value'] = humanoidRootPart['CFrame'];
+			print("Pos:", savedCFrameValue.Value);
 		else
 			warn("HumanoidRootPart nicht gefunden");
 		end
 	end);
 	teleportButton['MouseButton1Click']:Connect(function()
-		local FlatIdent_5E6B6 = 0;
-		local player;
-		local character;
-		local humanoidRootPart;
-		while true do
-			if (FlatIdent_5E6B6 == 0) then
-				player = game['Players']['LocalPlayer'];
-				character = player['Character'] or player['CharacterAdded']:Wait();
-				FlatIdent_5E6B6 = 1;
+		local player = game['Players']['LocalPlayer'];
+		local character = player['Character'] or player['CharacterAdded']:Wait();
+		local humanoidRootPart = character:FindFirstChild("HumanoidRootPart");
+		if humanoidRootPart then
+			if savedCFrameValue['Value'] then
+				humanoidRootPart['CFrame'] = savedCFrameValue['Value'];
+				print("Tp:", savedCFrameValue.Value);
+			else
+				warn("Keine gespeicherte Position gefunden!");
 			end
-			if (1 == FlatIdent_5E6B6) then
-				humanoidRootPart = character:FindFirstChild("HumanoidRootPart");
-				if (humanoidRootPart or (960 <= 876)) then
-					if savedCFrameValue['Value'] then
-						local FlatIdent_14A6D = 0;
-						while true do
-							if (FlatIdent_14A6D == 0) then
-								humanoidRootPart['CFrame'] = savedCFrameValue['Value'];
-								print("Tp:", savedCFrameValue.Value);
-								break;
-							end
-						end
-					else
-						warn("Keine gespeicherte Position gefunden!");
-					end
-				else
-					warn("HumanoidRootPart nicht gefunden!");
-				end
-				break;
-			end
+		else
+			warn("HumanoidRootPart nicht gefunden!");
 		end
 	end);
 end
-coroutine.wrap(LZIDO_fake_script)();
-local function QOHEYN_fake_script()
-	local FlatIdent_167D2 = 0;
-	local script;
-	local TABHome;
-	local TABMain;
-	local TABSide;
-	local TABTarget;
-	local TABAbout;
-	local TABTeleports;
-	local btn;
-	while true do
-		if (FlatIdent_167D2 == 0) then
-			script = Instance.new("LocalScript", About);
-			TABHome = script['Parent']['Parent']['Parent']["TAB:Home"];
-			FlatIdent_167D2 = 1;
-		end
-		if (FlatIdent_167D2 == 1) then
-			TABMain = script['Parent']['Parent']['Parent']["TAB:Main"];
-			TABSide = script['Parent']['Parent']['Parent']["TAB:Side"];
-			FlatIdent_167D2 = 2;
-		end
-		if (FlatIdent_167D2 == 3) then
-			TABTeleports = script['Parent']['Parent']['Parent']["TAB:Teleports"];
-			btn = script['Parent'];
-			FlatIdent_167D2 = 4;
-		end
-		if (FlatIdent_167D2 == 4) then
-			btn['MouseButton1Click']:Connect(function()
-				local FlatIdent_5C97A = 0;
-				while true do
-					if (FlatIdent_5C97A == 0) then
-						TABHome['Visible'] = false;
-						TABMain['Visible'] = false;
-						FlatIdent_5C97A = 1;
-					end
-					if (FlatIdent_5C97A == 2) then
-						TABAbout['Visible'] = true;
-						TABTeleports['Visible'] = false;
-						break;
-					end
-					if (FlatIdent_5C97A == 1) then
-						TABSide['Visible'] = false;
-						TABTarget['Visible'] = false;
-						FlatIdent_5C97A = 2;
-					end
-				end
-			end);
-			break;
-		end
-		if (2 == FlatIdent_167D2) then
-			TABTarget = script['Parent']['Parent']['Parent']["TAB:Target"];
-			TABAbout = script['Parent']['Parent']['Parent']["TAB:About"];
-			FlatIdent_167D2 = 3;
-		end
-	end
+coroutine.wrap(IIHBS_fake_script)();
+local function KKWCF_fake_script()
+	local script = Instance.new("LocalScript", VisualLightning);
+	local TABHome = script['Parent']['Parent']['Parent']["TAB:Home"];
+	local TABMain = script['Parent']['Parent']['Parent']["TAB:Main"];
+	local TABSide = script['Parent']['Parent']['Parent']["TAB:Side"];
+	local TABvis = script['Parent']['Parent']['Parent']["TAB:vislightning"];
+	local TABAbout = script['Parent']['Parent']['Parent']["TAB:About"];
+	local TABTeleports = script['Parent']['Parent']['Parent']["TAB:Teleports"];
+	local TABTarget = script['Parent']['Parent']['Parent']["TAB:Target"];
+	local btn = script['Parent'];
+	btn['MouseButton1Click']:Connect(function()
+		TABHome['Visible'] = false;
+		TABMain['Visible'] = false;
+		TABSide['Visible'] = false;
+		TABTarget['Visible'] = false;
+		TABAbout['Visible'] = false;
+		TABTeleports['Visible'] = false;
+		TABvis['Visible'] = true;
+	end);
 end
-coroutine.wrap(QOHEYN_fake_script)();
-local function XLNWOIH_fake_script()
+coroutine.wrap(KKWCF_fake_script)();
+local function FILASZJ_fake_script()
+	local script = Instance.new("LocalScript", Teleports);
+	local TABHome = script['Parent']['Parent']['Parent']["TAB:Home"];
+	local TABMain = script['Parent']['Parent']['Parent']["TAB:Main"];
+	local TABSide = script['Parent']['Parent']['Parent']["TAB:Side"];
+	local TABvis = script['Parent']['Parent']['Parent']["TAB:vislightning"];
+	local TABAbout = script['Parent']['Parent']['Parent']["TAB:About"];
+	local TABTeleports = script['Parent']['Parent']['Parent']["TAB:Teleports"];
+	local TABTarget = script['Parent']['Parent']['Parent']["TAB:Target"];
+	local btn = script['Parent'];
+	btn['MouseButton1Click']:Connect(function()
+		TABHome['Visible'] = false;
+		TABMain['Visible'] = false;
+		TABSide['Visible'] = false;
+		TABTarget['Visible'] = false;
+		TABAbout['Visible'] = false;
+		TABTeleports['Visible'] = true;
+		TABvis['Visible'] = false;
+	end);
+end
+coroutine.wrap(FILASZJ_fake_script)();
+local function PNQMXLL_fake_script()
+	local script = Instance.new("LocalScript", Main);
+	local TABHome = script['Parent']['Parent']['Parent']["TAB:Home"];
+	local TABMain = script['Parent']['Parent']['Parent']["TAB:Main"];
+	local TABSide = script['Parent']['Parent']['Parent']["TAB:Side"];
+	local TABvis = script['Parent']['Parent']['Parent']["TAB:vislightning"];
+	local TABAbout = script['Parent']['Parent']['Parent']["TAB:About"];
+	local TABTeleports = script['Parent']['Parent']['Parent']["TAB:Teleports"];
+	local TABTarget = script['Parent']['Parent']['Parent']["TAB:Target"];
+	local btn = script['Parent'];
+	btn['MouseButton1Click']:Connect(function()
+		TABHome['Visible'] = false;
+		TABMain['Visible'] = true;
+		TABSide['Visible'] = false;
+		TABTarget['Visible'] = false;
+		TABAbout['Visible'] = false;
+		TABTeleports['Visible'] = false;
+		TABvis['Visible'] = false;
+	end);
+end
+coroutine.wrap(PNQMXLL_fake_script)();
+local function POBNIOT_fake_script()
 	local script = Instance.new("LocalScript", Home);
 	local TABHome = script['Parent']['Parent']['Parent']["TAB:Home"];
 	local TABMain = script['Parent']['Parent']['Parent']["TAB:Main"];
 	local TABSide = script['Parent']['Parent']['Parent']["TAB:Side"];
-	local TABTarget = script['Parent']['Parent']['Parent']["TAB:Target"];
+	local TABvis = script['Parent']['Parent']['Parent']["TAB:vislightning"];
 	local TABAbout = script['Parent']['Parent']['Parent']["TAB:About"];
 	local TABTeleports = script['Parent']['Parent']['Parent']["TAB:Teleports"];
-	local btn = script['Parent'];
-	btn['MouseButton1Click']:Connect(function()
-		local FlatIdent_61BF4 = 0;
-		while true do
-			if (1 == FlatIdent_61BF4) then
-				TABSide['Visible'] = false;
-				TABTarget['Visible'] = false;
-				FlatIdent_61BF4 = 2;
-			end
-			if (FlatIdent_61BF4 == 2) then
-				TABAbout['Visible'] = false;
-				TABTeleports['Visible'] = false;
-				break;
-			end
-			if (FlatIdent_61BF4 == 0) then
-				TABHome['Visible'] = true;
-				TABMain['Visible'] = false;
-				FlatIdent_61BF4 = 1;
-			end
-		end
-	end);
-end
-coroutine.wrap(XLNWOIH_fake_script)();
-local function WJIKPS_fake_script()
-	local script = Instance.new("LocalScript", MainScriptsButton);
-	local TABHome = script['Parent']['Parent']['Parent']["TAB:Home"];
-	local TABMain = script['Parent']['Parent']['Parent']["TAB:Main"];
-	local TABSide = script['Parent']['Parent']['Parent']["TAB:Side"];
 	local TABTarget = script['Parent']['Parent']['Parent']["TAB:Target"];
-	local TABAbout = script['Parent']['Parent']['Parent']["TAB:About"];
-	local TABTeleports = script['Parent']['Parent']['Parent']["TAB:Teleports"];
 	local btn = script['Parent'];
 	btn['MouseButton1Click']:Connect(function()
-		local FlatIdent_3BBAF = 0;
-		while true do
-			if (FlatIdent_3BBAF == 2) then
-				TABAbout['Visible'] = false;
-				TABTeleports['Visible'] = false;
-				break;
-			end
-			if (0 == FlatIdent_3BBAF) then
-				TABHome['Visible'] = false;
-				TABMain['Visible'] = true;
-				FlatIdent_3BBAF = 1;
-			end
-			if (FlatIdent_3BBAF == 1) then
-				TABSide['Visible'] = false;
-				TABTarget['Visible'] = false;
-				FlatIdent_3BBAF = 2;
-			end
-		end
+		TABHome['Visible'] = true;
+		TABMain['Visible'] = false;
+		TABSide['Visible'] = false;
+		TABTarget['Visible'] = false;
+		TABAbout['Visible'] = false;
+		TABTeleports['Visible'] = false;
+		TABvis['Visible'] = false;
 	end);
 end
-coroutine.wrap(WJIKPS_fake_script)();
-local function JOKOS_fake_script()
+coroutine.wrap(POBNIOT_fake_script)();
+local function AOYGNP_fake_script()
 	local script = Instance.new("LocalScript", Combat);
 	local TABHome = script['Parent']['Parent']['Parent']["TAB:Home"];
 	local TABMain = script['Parent']['Parent']['Parent']["TAB:Main"];
 	local TABSide = script['Parent']['Parent']['Parent']["TAB:Side"];
-	local TABTarget = script['Parent']['Parent']['Parent']["TAB:Target"];
+	local TABvis = script['Parent']['Parent']['Parent']["TAB:vislightning"];
 	local TABAbout = script['Parent']['Parent']['Parent']["TAB:About"];
 	local TABTeleports = script['Parent']['Parent']['Parent']["TAB:Teleports"];
+	local TABTarget = script['Parent']['Parent']['Parent']["TAB:Target"];
 	local btn = script['Parent'];
 	btn['MouseButton1Click']:Connect(function()
-		local FlatIdent_1F4E2 = 0;
-		while true do
-			if (FlatIdent_1F4E2 == 0) then
-				TABHome['Visible'] = false;
-				TABMain['Visible'] = false;
-				FlatIdent_1F4E2 = 1;
+		TABHome['Visible'] = false;
+		TABMain['Visible'] = false;
+		TABSide['Visible'] = true;
+		TABTarget['Visible'] = false;
+		TABAbout['Visible'] = false;
+		TABTeleports['Visible'] = false;
+		TABvis['Visible'] = false;
+	end);
+end
+coroutine.wrap(AOYGNP_fake_script)();
+local function IUVJDW_fake_script()
+	local script = Instance.new("LocalScript", About);
+	local TABHome = script['Parent']['Parent']['Parent']["TAB:Home"];
+	local TABMain = script['Parent']['Parent']['Parent']["TAB:Main"];
+	local TABSide = script['Parent']['Parent']['Parent']["TAB:Side"];
+	local TABvis = script['Parent']['Parent']['Parent']["TAB:vislightning"];
+	local TABAbout = script['Parent']['Parent']['Parent']["TAB:About"];
+	local TABTeleports = script['Parent']['Parent']['Parent']["TAB:Teleports"];
+	local TABTarget = script['Parent']['Parent']['Parent']["TAB:Target"];
+	local btn = script['Parent'];
+	btn['MouseButton1Click']:Connect(function()
+		TABHome['Visible'] = false;
+		TABMain['Visible'] = false;
+		TABSide['Visible'] = false;
+		TABTarget['Visible'] = false;
+		TABAbout['Visible'] = true;
+		TABTeleports['Visible'] = false;
+		TABvis['Visible'] = false;
+	end);
+end
+coroutine.wrap(IUVJDW_fake_script)();
+local function GSYRJC_fake_script()
+	local script = Instance.new("LocalScript", Target);
+	local TABHome = script['Parent']['Parent']['Parent']["TAB:Home"];
+	local TABMain = script['Parent']['Parent']['Parent']["TAB:Main"];
+	local TABSide = script['Parent']['Parent']['Parent']["TAB:Side"];
+	local TABvis = script['Parent']['Parent']['Parent']["TAB:vislightning"];
+	local TABAbout = script['Parent']['Parent']['Parent']["TAB:About"];
+	local TABTeleports = script['Parent']['Parent']['Parent']["TAB:Teleports"];
+	local TABTarget = script['Parent']['Parent']['Parent']["TAB:Target"];
+	local btn = script['Parent'];
+	btn['MouseButton1Click']:Connect(function()
+		TABHome['Visible'] = false;
+		TABMain['Visible'] = false;
+		TABSide['Visible'] = false;
+		TABTarget['Visible'] = true;
+		TABAbout['Visible'] = false;
+		TABTeleports['Visible'] = false;
+		TABvis['Visible'] = false;
+	end);
+end
+coroutine.wrap(GSYRJC_fake_script)();
+local function GNGG_fake_script()
+	local script = Instance.new("LocalScript", TABTarget);
+	local nameInput = script['Parent']:FindFirstChild("plrInput");
+	local headshotImage = script['Parent']:FindFirstChild("plrheadshot");
+	local spectateButton = script['Parent']:FindFirstChild("view");
+	local aimLineButton = script['Parent']:FindFirstChild("aimview");
+	local teleportButton = script['Parent']:FindFirstChild("goto");
+	local playerService = game:GetService("Players");
+	local localPlayer = playerService['LocalPlayer'];
+	local camera = workspace['CurrentCamera'];
+	local currentSpectateTarget = nil;
+	local aimBeams = {};
+	local minInputLength = 3;
+	local Colours = {At=ColorSequence.new(Color3.new(1, 0, 0), Color3.new(1, 0, 0)),Away=ColorSequence.new(Color3.new(0, 1, 0), Color3.new(0, 1, 0))};
+	local function findPlayer(input)
+		input = input:lower();
+		for _, player in ipairs(playerService:GetPlayers()) do
+			if ((player['Name']:lower():sub(1, #input) == input) or (player['DisplayName']:lower():sub(1, #input) == input)) then
+				return player;
 			end
-			if (FlatIdent_1F4E2 == 1) then
-				TABSide['Visible'] = true;
-				TABTarget['Visible'] = false;
-				FlatIdent_1F4E2 = 2;
+		end
+		return nil;
+	end
+	local function updateHeadshot(targetPlayer)
+		if ((1896 <= 3422) and targetPlayer) then
+			headshotImage['Image'] = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. targetPlayer['UserId'] .. "&width=150&height=150&format=png";
+		else
+			headshotImage['Image'] = "";
+		end
+	end
+	local function createBeam(character)
+		local beam = Instance.new("Beam");
+		local startAttachment = Instance.new("Attachment");
+		local endAttachment = Instance.new("Attachment");
+		startAttachment['Parent'] = character:WaitForChild("Head");
+		endAttachment['Parent'] = workspace['Terrain'];
+		beam['Attachment0'] = startAttachment;
+		beam['Attachment1'] = endAttachment;
+		beam['FaceCamera'] = true;
+		beam['Width0'] = 0.1;
+		beam['Width1'] = 0.1;
+		beam['Color'] = Colours['Away'];
+		beam['LightEmission'] = 1;
+		beam['LightInfluence'] = 0;
+		beam['Transparency'] = NumberSequence.new(0);
+		beam['Parent'] = workspace;
+		return beam, startAttachment, endAttachment;
+	end
+	local function updateBeam(beam, startAttachment, endAttachment, mousePos)
+		local character = localPlayer['Character'];
+		local origin = startAttachment['WorldPosition'];
+		local direction = mousePos - origin;
+		local raycastParams = RaycastParams.new();
+		raycastParams['FilterDescendantsInstances'] = {character,workspace['CurrentCamera']};
+		raycastParams['FilterType'] = Enum['RaycastFilterType']['Exclude'];
+		local raycastResult = workspace:Raycast(origin, direction * 2, raycastParams);
+		if not raycastResult then
+			beam['Color'] = Colours['Away'];
+			endAttachment['WorldPosition'] = mousePos;
+			return;
+		end
+		if character then
+			beam['Color'] = (raycastResult['Instance']:IsDescendantOf(character) and Colours['At']) or Colours['Away'];
+		end
+		endAttachment['WorldPosition'] = raycastResult['Position'];
+	end
+	local function toggleAimView(targetPlayer)
+		if aimBeams[targetPlayer] then
+			local beamData = aimBeams[targetPlayer];
+			beamData['beam']:Destroy();
+			beamData['startAttachment']:Destroy();
+			beamData['endAttachment']:Destroy();
+			aimBeams[targetPlayer] = nil;
+			aimLineButton['Text'] = "AimView";
+		elseif ((targetPlayer and targetPlayer['Character']) or (990 > 1620)) then
+			local mousePos = targetPlayer:WaitForChild("MousePos");
+			local beam, startAttachment, endAttachment = createBeam(targetPlayer.Character);
+			aimBeams[targetPlayer] = {beam=beam,startAttachment=startAttachment,endAttachment=endAttachment};
+			aimLineButton['Text'] = "UnAimView";
+			mousePos['Changed']:Connect(function()
+				updateBeam(beam, startAttachment, endAttachment, mousePos.Value);
+			end);
+		end
+	end
+	local function toggleSpectate(targetPlayer)
+		if (currentSpectateTarget or (877 > 4695)) then
+			camera['CameraSubject'] = localPlayer['Character']:FindFirstChildWhichIsA("Humanoid");
+			game['StarterGui']:SetCore("SendNotification", {Title="Kroton",Text=("Unviewed: " .. targetPlayer['Name']),Duration=2});
+			currentSpectateTarget = nil;
+			spectateButton['Text'] = "View";
+		elseif ((2691 >= 1851) and targetPlayer and targetPlayer['Character']) then
+			currentSpectateTarget = targetPlayer;
+			camera['CameraSubject'] = targetPlayer['Character']:FindFirstChildWhichIsA("Humanoid");
+			game['StarterGui']:SetCore("SendNotification", {Title="Kroton",Text=("Now viewing: " .. targetPlayer['Name']),Duration=2});
+			spectateButton['Text'] = "Unview";
+		end
+	end
+	local function teleportToPlayer(targetPlayer)
+		if ((targetPlayer and targetPlayer['Character'] and localPlayer['Character']) or (2985 >= 4856)) then
+			local targetRoot = targetPlayer['Character']:FindFirstChild("HumanoidRootPart");
+			local localRoot = localPlayer['Character']:FindFirstChild("HumanoidRootPart");
+			if (targetRoot and localRoot) then
+				localRoot['CFrame'] = targetRoot['CFrame'];
+				game['StarterGui']:SetCore("SendNotification", {Title="Kroton",Text=("TPed to: " .. targetPlayer['Name']),Duration=2});
 			end
-			if (FlatIdent_1F4E2 == 2) then
-				TABAbout['Visible'] = false;
-				TABTeleports['Visible'] = false;
-				break;
+		end
+	end
+	nameInput['FocusLost']:Connect(function(enterPressed)
+		if (enterPressed and (#nameInput['Text'] >= minInputLength)) then
+			local targetPlayer = findPlayer(nameInput.Text);
+			if targetPlayer then
+				nameInput['Text'] = targetPlayer['Name'];
+				updateHeadshot(targetPlayer);
+			else
+				nameInput['Text'] = "";
+				headshotImage['Image'] = "";
 			end
 		end
 	end);
+	spectateButton['MouseButton1Click']:Connect(function()
+		local targetPlayer = findPlayer(nameInput.Text);
+		toggleSpectate(targetPlayer);
+	end);
+	aimLineButton['MouseButton1Click']:Connect(function()
+		local targetPlayer = findPlayer(nameInput.Text);
+		toggleAimView(targetPlayer);
+	end);
+	teleportButton['MouseButton1Click']:Connect(function()
+		local targetPlayer = findPlayer(nameInput.Text);
+		teleportToPlayer(targetPlayer);
+	end);
 end
-coroutine.wrap(JOKOS_fake_script)();
-local function NLIS_fake_script()
-	local FlatIdent_99057 = 0;
-	local script;
-	local TABHome;
-	local TABMain;
-	local TABSide;
-	local TABTarget;
-	local TABAbout;
-	local TABTeleports;
-	local btn;
-	while true do
-		if (FlatIdent_99057 == 2) then
-			TABTarget = script['Parent']['Parent']['Parent']["TAB:Target"];
-			TABAbout = script['Parent']['Parent']['Parent']["TAB:About"];
-			FlatIdent_99057 = 3;
-		end
-		if (FlatIdent_99057 == 1) then
-			TABMain = script['Parent']['Parent']['Parent']["TAB:Main"];
-			TABSide = script['Parent']['Parent']['Parent']["TAB:Side"];
-			FlatIdent_99057 = 2;
-		end
-		if (FlatIdent_99057 == 3) then
-			TABTeleports = script['Parent']['Parent']['Parent']["TAB:Teleports"];
-			btn = script['Parent'];
-			FlatIdent_99057 = 4;
-		end
-		if (FlatIdent_99057 == 0) then
-			script = Instance.new("LocalScript", VisualLightning);
-			TABHome = script['Parent']['Parent']['Parent']["TAB:Home"];
-			FlatIdent_99057 = 1;
-		end
-		if (4 == FlatIdent_99057) then
-			btn['MouseButton1Click']:Connect(function()
-				TABHome['Visible'] = false;
-				TABMain['Visible'] = false;
-				TABSide['Visible'] = false;
-				TABTarget['Visible'] = true;
-				TABAbout['Visible'] = false;
-				TABTeleports['Visible'] = false;
-			end);
-			break;
-		end
-	end
-end
-coroutine.wrap(NLIS_fake_script)();
-local function EEVU_fake_script()
-	local FlatIdent_630B0 = 0;
-	local script;
-	local TABHome;
-	local TABMain;
-	local TABSide;
-	local TABTarget;
-	local TABAbout;
-	local TABTeleports;
-	local btn;
-	while true do
-		if (FlatIdent_630B0 == 0) then
-			script = Instance.new("LocalScript", Teleports);
-			TABHome = script['Parent']['Parent']['Parent']["TAB:Home"];
-			FlatIdent_630B0 = 1;
-		end
-		if (4 == FlatIdent_630B0) then
-			btn['MouseButton1Click']:Connect(function()
-				local FlatIdent_28DC7 = 0;
-				while true do
-					if (FlatIdent_28DC7 == 2) then
-						TABAbout['Visible'] = false;
-						TABTeleports['Visible'] = true;
-						break;
-					end
-					if (FlatIdent_28DC7 == 1) then
-						TABSide['Visible'] = false;
-						TABTarget['Visible'] = false;
-						FlatIdent_28DC7 = 2;
-					end
-					if (FlatIdent_28DC7 == 0) then
-						TABHome['Visible'] = false;
-						TABMain['Visible'] = false;
-						FlatIdent_28DC7 = 1;
-					end
-				end
-			end);
-			break;
-		end
-		if (1 == FlatIdent_630B0) then
-			TABMain = script['Parent']['Parent']['Parent']["TAB:Main"];
-			TABSide = script['Parent']['Parent']['Parent']["TAB:Side"];
-			FlatIdent_630B0 = 2;
-		end
-		if (FlatIdent_630B0 == 2) then
-			TABTarget = script['Parent']['Parent']['Parent']["TAB:Target"];
-			TABAbout = script['Parent']['Parent']['Parent']["TAB:About"];
-			FlatIdent_630B0 = 3;
-		end
-		if (FlatIdent_630B0 == 3) then
-			TABTeleports = script['Parent']['Parent']['Parent']["TAB:Teleports"];
-			btn = script['Parent'];
-			FlatIdent_630B0 = 4;
-		end
-	end
-end
-coroutine.wrap(EEVU_fake_script)();
+coroutine.wrap(GNGG_fake_script)();
